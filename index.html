@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c1017">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AGS Takip">
+  <title>AGS &amp; ÖABT Kimya Takip</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo"><span class="logo-mark">⚗</span><span class="logo-text">AGS Takip</span></div>
+      <nav id="nav"></nav>
+      <button class="nav-item settings-btn" data-a="settings"><span class="ni" id="ico-settings"></span><span>Ayarlar</span></button>
+    </aside>
+    <main id="main"></main>
+  </div>
+
+  <dialog id="settings">
+    <h2>Ayarlar</h2>
+    <p class="muted">ÖSYM 2027 sınav tarihlerini açıkladığında buraya girin.</p>
+    <label class="field">AGS tarihi
+      <input type="date" id="d-ags">
+    </label>
+    <label class="field">ÖABT tarihi
+      <input type="date" id="d-oabt">
+    </label>
+    <hr>
+    <h3>Yedekleme</h3>
+    <p class="muted">İlerleme bu tabletin tarayıcısında saklanır. Tarayıcı verisi silinirse kaybolur; arada yedek alın.</p>
+    <div class="row">
+      <button class="btn" data-a="export">Yedeği indir</button>
+      <label class="btn btn-ghost">Yedeği yükle
+        <input type="file" id="import" accept="application/json,.json" hidden>
+      </label>
+    </div>
+    <hr>
+    <div class="row">
+      <button class="btn btn-danger" data-a="reset">Tüm verileri sıfırla</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" data-a="closeSettings">Kapat</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="konular.js"></script>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then((reg) => {
+          console.log('ServiceWorker registered:', reg.scope);
+        }).catch((err) => {
+          console.warn('ServiceWorker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
