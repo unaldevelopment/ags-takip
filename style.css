@@ -1,62 +1,57 @@
 /* ==========================================================================
-   AGS & ÖABT KİMYA TAKİP - SÜRÜM 2.0 (APPLE PRO DESIGN SYSTEM)
-   Apple Human Interface Guidelines (iPadOS & macOS) Tasarımı
+   AGS & ÖABT KİMYA TAKİP - SÜRÜM 3.0 (PREMIUM DARK PANEL)
+   Hedef Cihaz: Yatay Tablet (1280–1440 px), Dokunmatik Odaklı & Mobil Uyumlu
    ========================================================================== */
 
 :root {
-  /* Renk Paleti - Apple Pro Dark Titanium & Deep Space */
-  --bg: #07080a;
-  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(10, 132, 255, 0.08) 0%, transparent 45%),
-                 radial-gradient(circle at 88% 85%, rgba(94, 92, 230, 0.07) 0%, transparent 50%),
-                 radial-gradient(circle at 50% 50%, rgba(48, 209, 88, 0.03) 0%, transparent 60%);
-  --card: rgba(22, 24, 34, 0.75);
-  --card-solid: #151722;
-  --card-elevated: rgba(30, 34, 48, 0.82);
-  --card-hover: rgba(36, 41, 58, 0.9);
+  /* Renk Paleti */
+  --bg: #0b0f16;
+  --sidebar: #0a0d13;
+  --card: #121823;
+  --line: #1f2938;
+  --card-dark: #0b0f16;
 
-  /* Apple Tipografi & Kontrast */
-  --ink: #f5f5f7;
-  --ink-secondary: #a1a1a6;
-  --muted: #86868b;
-  --line: rgba(255, 255, 255, 0.09);
-  --line-light: rgba(255, 255, 255, 0.05);
-  --line-focus: rgba(10, 132, 255, 0.55);
+  /* Metin Renkleri */
+  --ink: #e8edf5;
+  --ink-sec: #9aa7ba;
+  --muted: #9aa7ba;
+  --helper: #c3cddb;
 
-  /* Apple Accent Renkleri */
-  --blue: #0a84ff;
-  --blue-gradient: linear-gradient(180deg, #2997ff 0%, #0071e3 100%);
-  --blue-soft: rgba(10, 132, 255, 0.16);
-  --indigo: #5e5ce6;
-  --indigo-soft: rgba(94, 92, 230, 0.18);
-  --teal: #30d158;
-  --teal-soft: rgba(48, 209, 88, 0.16);
-  --cyan: #64d2ff;
-  --cyan-soft: rgba(100, 210, 255, 0.16);
-  --amber: #ff9f0a;
-  --amber-soft: rgba(255, 159, 10, 0.16);
-  --rose: #ff453a;
-  --rose-soft: rgba(255, 69, 58, 0.16);
-  --purple: #bf5af2;
-  --purple-soft: rgba(191, 90, 242, 0.18);
+  /* Vurgu Renkleri */
+  --blue: #2563eb;
+  --blue-light: #5aa9ff;
+  --green: #34d399;
+  --amber: #f2b84b;
 
-  /* Apple Squircle Köşeler & Gölgeler */
-  --radius: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
+  /* Nötr Rozet */
+  --badge-neutral-text: #b4c0d2;
+  --badge-neutral-bg: #1b2434;
+
+  /* Seçili Kart */
+  --card-selected-border: #2563eb;
+  --card-selected-bg: #14203a;
+
+  /* Bugün Takvim Kutusu */
+  --today-bg: #1c2a45;
+  --today-border: #2563eb;
+
+  /* Ayarlar Penceresi */
+  --modal-bg: #151b26;
+  --modal-danger: #ff8a80;
+
+  /* Yuvarlak Köşeler */
+  --radius-card: 20px;
+  --radius-btn: 14px;
   --radius-pill: 9999px;
-  --shadow: 0 10px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --shadow-glow: 0 0 24px rgba(10, 132, 255, 0.3);
-  --shadow-glow-purple: 0 0 24px rgba(191, 90, 242, 0.28);
+  --radius-chk: 7px;
 }
 
-/* ================== GÜZEL BİR SCROLL (APPLE FLOATING GLASS SCROLLBAR) ================== */
+/* ================== GÜZEL BİR SCROLLBAR ================== */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  scroll-behavior: smooth;
+  scrollbar-color: #2b394e transparent;
 }
 
 ::-webkit-scrollbar {
@@ -69,19 +64,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.18);
+  background-color: #2b394e;
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
-  transition: background-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.42);
+  background-color: #3f5270;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #5aa9ff;
 }
 
 ::-webkit-scrollbar-corner {
@@ -91,21 +86,30 @@
 /* ================== GENEL TEMEL STILLER ================== */
 html, body {
   margin: 0;
+  padding: 0;
   height: 100%;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Plus Jakarta Sans", system-ui, "Helvetica Neue", sans-serif;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg);
-  background-image: var(--bg-gradient);
-  background-attachment: fixed;
+  background-image: none !important;
   color: var(--ink);
-  font-size: 15.5px;
-  line-height: 1.45;
-  letter-spacing: -0.012em;
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4,
+.overall-big-num,
+.kpi-num,
+.day-count,
+.course-progress-pct,
+.logo-text,
+.side-header-title,
+.chip-countdown .days-num {
+  font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 button, input, select, textarea {
@@ -116,44 +120,49 @@ button, input, select, textarea {
 button {
   cursor: pointer;
   border: 0;
-  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1),
-              background 0.2s ease,
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-button:active {
-  transform: scale(0.975);
+:focus-visible {
+  outline: 2px solid var(--blue-light) !important;
+  outline-offset: 2px;
 }
 
-h1, h2, h3, h4 {
-  margin: 0;
-  letter-spacing: -0.024em;
-  font-weight: 700;
-  color: var(--ink);
+/* Kartlarda ve düz yüzeylerde gölge ve gradyan yok */
+.card,
+.card-overall,
+.card-station,
+.course-card-v3,
+.kpi-box,
+.day-box,
+.forgetting-rule-box,
+dialog#settings,
+.chip-countdown {
+  box-shadow: none !important;
+  background-image: none !important;
 }
 
 .muted {
-  color: var(--muted);
-  font-size: .88rem;
-  letter-spacing: -0.01em;
+  color: var(--ink-sec);
+  font-size: 14px;
 }
 
 .spacer { flex: 1; }
 
-/* ================== YERLEŞİM (APPLE SIDEBAR & MAIN) ================== */
+/* ================== YERLEŞİM (SIDEBAR & MAIN) ================== */
 .app {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  min-height: 100%;
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
 }
 
 .sidebar {
-  background: rgba(14, 16, 23, 0.85);
-  backdrop-filter: blur(36px) saturate(190%);
-  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  width: 240px;
+  min-width: 240px;
+  flex-shrink: 0;
+  background: var(--sidebar);
   border-right: 1px solid var(--line);
-  padding: 24px 14px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -161,35 +170,42 @@ h1, h2, h3, h4 {
   top: 0;
   height: 100vh;
   z-index: 30;
+  overflow-y: auto;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 12px 22px;
-  font-weight: 800;
-  font-size: 1.18rem;
-  letter-spacing: -0.025em;
-  color: var(--ink);
+  padding: 0 4px 20px 4px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--line);
 }
 
-.logo-mark {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
+.logo-box, .logo-mark {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
-  color: #fff;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
+  background: var(--blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-box svg, .logo-mark svg {
+  width: 22px;
+  height: 22px;
 }
 
 .logo-text {
-  background: linear-gradient(180deg, #ffffff 0%, #d1d5db 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
 }
 
 #nav {
@@ -202,25 +218,28 @@ h1, h2, h3, h4 {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
+  height: 48px;
   min-height: 48px;
   padding: 0 16px;
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   background: transparent;
-  color: var(--ink-secondary);
-  font-weight: 600;
-  font-size: .94rem;
+  color: var(--helper);
+  font-weight: 500;
+  font-size: 15px;
   text-align: left;
   width: 100%;
-  position: relative;
-  letter-spacing: -0.015em;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .nav-item .ni {
   width: 22px;
   height: 22px;
-  display: inline-flex;
-  opacity: .85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-item svg {
@@ -229,126 +248,967 @@ h1, h2, h3, h4 {
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
 }
 
 .nav-item.active {
-  background: var(--blue-gradient);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(10, 132, 255, 0.42);
+  background: var(--blue);
+  color: #ffffff;
+  font-weight: 600;
 }
 
-.nav-item.active .ni {
-  opacity: 1;
+.nav-item .rozet {
+  margin-left: auto;
+  background: var(--amber);
+  color: #0b0f16;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
 }
 
 .settings-btn {
-  color: var(--muted);
-  border: 1px solid transparent;
+  margin-top: auto;
+  color: var(--helper);
 }
 
 .settings-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+}
+
+main, #main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 36px;
+  overflow-y: auto;
+}
+
+/* ================== BAŞLIK & GERİ SAYIM ROZETLERİ ================== */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.head h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.head-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chip-countdown {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-countdown:hover {
+  border-color: var(--blue-light);
+}
+
+.chip-countdown svg {
+  width: 20px;
+  height: 20px;
+  color: var(--blue-light);
+}
+
+.chip-countdown .days-num {
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* Eski chip yapısı uyumluluğu */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.chip b {
+  color: var(--blue-light);
+  font-weight: 700;
+}
+
+/* ================== PANEL İKİ SÜTUNLU YERLEŞİM ================== */
+.panel-grid-v3 {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.col-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.col-right-side {
+  width: 440px;
+  min-width: 440px;
+  flex-shrink: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  position: sticky;
+  top: 32px;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================== SOL SÜTUN a) GENEL İLERLEME KARTI ================== */
+.card-overall {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.overall-top {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.ring-wrap {
+  width: 140px;
+  height: 140px;
+  min-width: 140px;
+  min-height: 140px;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overall-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overall-big-num {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.overall-sub-text {
+  font-size: 15px;
+  color: var(--ink-sec);
+  margin-top: 4px;
+}
+
+.overall-sub-exams {
+  font-size: 15px;
+  color: var(--ink-sec);
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.badge-pill {
+  height: 36px;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.badge-green {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.badge-blue {
+  background: rgba(90, 169, 255, 0.12);
+  color: var(--blue-light);
+  border: 1px solid rgba(90, 169, 255, 0.3);
+}
+
+.badge-amber {
+  background: rgba(242, 184, 75, 0.12);
+  color: var(--amber);
+  border: 1px solid rgba(242, 184, 75, 0.3);
+}
+
+.badge-neutral {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+  border: 1px solid var(--line);
+}
+
+/* ================== SOL SÜTUN b) AKILLI HAFIZA & TEKRAR İSTASYONU ================== */
+.card-station {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.station-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.station-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.station-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.station-subtitle {
+  font-size: 14px;
+  color: var(--ink-sec);
+}
+
+.station-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.kpi-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpi-box .kpi-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.kpi-box .kpi-desc {
+  font-size: 14px;
+  color: var(--ink-sec);
+  line-height: 1.3;
+}
+
+.forgetting-rule-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--helper);
+}
+
+.forgetting-rule-box strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Bekleyen tekrarlar */
+.ti-list-due {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ti-item-due {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ti-item-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.ti-item-meta {
+  font-size: 13px;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ti-item-meta .gecikme {
+  color: #ff8a80;
+}
+
+.ti-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ti-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-repeat-ok {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--blue);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.btn-repeat-defer {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--helper);
+  font-size: 14px;
+}
+
+.schedule-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-heading {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.schedule-grid-7 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.day-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.day-box .day-lbl {
+  font-size: 13px;
+  color: var(--ink-sec);
+}
+
+.day-box .day-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.day-box .day-date {
+  font-size: 12px;
+  color: var(--ink-sec);
+}
+
+.day-box.is-today {
+  border: 1px solid var(--today-border) !important;
+  background: var(--today-bg) !important;
+}
+
+.day-box.is-today .day-lbl {
+  color: var(--blue-light);
+  font-weight: 600;
+}
+
+.day-box.is-today .day-count {
+  color: #ffffff;
+}
+
+/* ================== SOL SÜTUN c) DERS KARTLARI (4 SÜTUNLU IZGARA) ================== */
+.course-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.course-card-v3 {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 110px;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.course-card-v3:hover {
+  border-color: #2b394e;
+}
+
+.course-card-v3.active {
+  border-color: var(--card-selected-border) !important;
+  background: var(--card-selected-bg) !important;
+}
+
+.course-top-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.course-title-text {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.course-questions-text {
+  font-size: 14px;
+  color: var(--ink-sec);
+}
+
+.course-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.course-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--card-dark);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.course-progress-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease;
+}
+
+.course-progress-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-sec);
+  min-width: 32px;
+  text-align: right;
+}
+
+.course-card-v3.active .course-progress-pct {
+  color: var(--blue-light);
+}
+
+/* ================== SAĞ PANEL (440 px KONU PANELİ) ================== */
+.side-header-sticky {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 5;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.side-resource-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.side-resource-empty {
+  font-size: 14px;
+  color: var(--ink-sec);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-resource-link {
+  font-size: 14px;
+  color: var(--blue-light);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-resource-link:hover {
+  text-decoration: underline;
+}
+
+.btn-icon-44 {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-sec);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-icon-44:hover {
+  background: var(--card-dark);
   border-color: var(--line);
   color: var(--ink);
 }
 
-main {
-  padding: 30px 36px 48px;
-  min-width: 0;
-  -webkit-overflow-scrolling: touch;
+.btn-icon-44.has-note {
+  color: var(--blue-light);
 }
 
-/* ================== BAŞLIK & APPLE GERİ SAYIM ÇİPLERİ ================== */
-.head {
+.btn-filter-repeat {
+  height: 44px;
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card-dark);
+  color: var(--helper);
+  font-size: 14px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 26px;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.head h1 {
-  font-size: 1.85rem;
+.btn-filter-repeat:hover {
+  border-color: var(--blue-light);
+  color: var(--ink);
+}
+
+.btn-filter-repeat.active {
+  border-color: var(--blue);
+  background: var(--card-selected-bg);
+  color: var(--blue-light);
+}
+
+.side-topics-scroll {
+  overflow-y: auto;
+  padding: 16px 24px 24px 24px;
   flex: 1;
-  min-width: 180px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  min-height: 0;
 }
 
-.chip {
+.topic-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.topic-group-title {
+  color: var(--blue-light);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.topic-group-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-sec);
+}
+
+.topic-list-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topic-row-item {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+}
+
+.topic-row-item.done .topic-name-text {
+  text-decoration: line-through;
+  color: var(--ink-sec);
+}
+
+.chk-box-custom {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  border: 2px solid #3a475c;
+  border-radius: var(--radius-chk);
+  background-color: transparent;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 9px 16px;
-  border-radius: var(--radius-pill);
-  background: var(--card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  font-size: .92rem;
-  font-weight: 600;
+  justify-content: center;
+  margin: 0;
+  transition: all 0.15s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chk-box-custom:checked {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+.chk-box-custom:checked::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 11px;
+  border: solid var(--card-dark);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+  top: 4px;
+}
+
+.topic-name-text {
+  font-size: 15px;
   color: var(--ink);
-  transition: border-color 0.2s, transform 0.2s;
+  line-height: 1.35;
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chip:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
-}
-
-.chip svg {
-  width: 17px;
-  height: 17px;
-  color: var(--cyan);
-}
-
-.chip b {
-  color: var(--cyan);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.chip small {
-  color: var(--muted);
+.topic-status-pill {
+  height: 34px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
   font-weight: 500;
-  margin-left: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-/* ================== APPLE KARTLAR & İLERLEME ÇUBUĞU ================== */
+.topic-status-pill.s0 {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+  border: 1px solid var(--line);
+}
+
+.topic-status-pill.s1 {
+  background: rgba(90, 169, 255, 0.12);
+  color: var(--blue-light);
+  border: 1px solid rgba(90, 169, 255, 0.3);
+}
+
+.topic-status-pill.s2 {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.topic-status-pill.s3 {
+  background: rgba(242, 184, 75, 0.12);
+  color: var(--amber);
+  border: 1px solid rgba(242, 184, 75, 0.3);
+}
+
+.topic-note-editor {
+  border-top: 1px dashed var(--line);
+  padding: 10px 0 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card-dark);
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* ================== AYARLAR PENCERESİ (480 px, #151b26, 24 px) ================== */
+dialog#settings {
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  background: var(--modal-bg);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px 32px;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+dialog#settings::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: var(--ink-sec);
+  margin-top: 6px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.field-label {
+  display: block;
+  font-size: 14px;
+  color: var(--helper);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.input-dark-48 {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 15px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input-dark-48:focus, .note-textarea:focus {
+  border-color: var(--blue-light);
+}
+
+.modal-divider {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 20px 0;
+}
+
+.modal-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ink);
+}
+
+.backup-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-backup {
+  height: 48px;
+  min-height: 48px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-backup:hover {
+  border-color: var(--blue-light);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-reset-danger {
+  background: transparent;
+  border: 0;
+  color: var(--modal-danger);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px 0;
+  min-height: 44px;
+}
+
+.btn-reset-danger:hover {
+  text-decoration: underline;
+}
+
+.btn-close-amber {
+  height: 48px;
+  min-height: 48px;
+  padding: 0 28px;
+  background: var(--amber);
+  color: #0b0f16;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-close-amber:hover {
+  opacity: 0.9;
+}
+
+/* ================== BUTONLAR VE ESKİ ELEMAN UYUMLULUĞU ================== */
 .card {
   background: var(--card);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 24px;
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
   position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  pointer-events: none;
 }
 
 .card h2 {
-  font-size: 1.22rem;
-  letter-spacing: -0.022em;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
 }
 
 .bar {
   height: 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--card-dark);
   border-radius: var(--radius-pill);
   overflow: hidden;
   flex: 1;
@@ -357,343 +1217,13 @@ main {
 .bar > i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #0a84ff 0%, #30d158 100%);
+  background: var(--blue);
   border-radius: var(--radius-pill);
-  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  box-shadow: 0 0 10px rgba(48, 209, 88, 0.4);
+  transition: width 0.3s ease;
 }
 
 .bar.indigo > i {
-  background: linear-gradient(90deg, #5e5ce6 0%, #bf5af2 100%);
-  box-shadow: 0 0 10px rgba(191, 90, 242, 0.4);
-}
-
-/* ================== GENEL BAKIŞ / PANEL ================== */
-.panel-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(340px, 1fr);
-  gap: 22px;
-  align-items: start;
-}
-
-.overall {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
-}
-
-.ring {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  flex: none;
-  filter: drop-shadow(0 0 14px rgba(10, 132, 255, 0.3));
-}
-
-.ring svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.ring .t {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 1.85rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #fff;
-}
-
-.overall-info {
-  flex: 1;
-  min-width: 200px;
-}
-
-.overall-info .big {
-  font-size: 2.3rem;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: #fff;
-}
-
-.stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-}
-
-.stat {
-  padding: 6px 13px;
-  border-radius: var(--radius-pill);
-  font-size: .86rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
-  color: var(--ink-secondary);
-}
-
-.courses {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 15px;
-}
-
-.course {
-  text-align: left;
-  border: 1px solid var(--line);
-  background: var(--card-solid);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 18px;
-  min-height: 98px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.course:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.course.active {
-  border-color: var(--blue);
-  background: rgba(10, 132, 255, 0.12);
-  box-shadow: 0 0 18px rgba(10, 132, 255, 0.25);
-}
-
-.course .ct {
-  font-weight: 700;
-  font-size: .98rem;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-}
-
-.course .cs {
-  color: var(--muted);
-  font-size: .84rem;
-  font-weight: 500;
-}
-
-.course .pr {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: .88rem;
-  font-weight: 700;
-  color: var(--ink-secondary);
-}
-
-.course.oabt .bar > i {
-  background: linear-gradient(90deg, #5e5ce6 0%, #bf5af2 100%);
-  box-shadow: 0 0 10px rgba(191, 90, 242, 0.4);
-}
-
-.side {
-  position: sticky;
-  top: 24px;
-  max-height: calc(100vh - 48px);
-  display: flex;
-  flex-direction: column;
-}
-
-.side .scroll {
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-top: 12px;
-  padding-right: 4px;
-}
-
-/* ================== KONU LİSTESİ (APPLE GROUPED INSET) ================== */
-.group-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 18px 0 8px;
-  font-weight: 700;
-  color: var(--cyan);
-  font-size: .96rem;
-  letter-spacing: -0.015em;
-}
-
-.group-title .gp {
-  margin-left: auto;
-  font-weight: 600;
-  color: var(--muted);
-  font-size: .84rem;
-}
-
-.konular {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.konu {
-  border-bottom: 1px solid var(--line-light);
-  padding: 6px 0;
-  transition: background 0.15s;
-}
-
-.konu:last-child {
-  border-bottom: 0;
-}
-
-.konu .r {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 52px;
-}
-
-.konu .kad {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  font-size: .94rem;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-.konu.done .kad {
-  color: var(--muted);
-  text-decoration: line-through;
-  text-decoration-color: rgba(255, 255, 255, 0.25);
-}
-
-.chk {
-  width: 26px;
-  height: 26px;
-  flex: none;
-  border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  font-size: 0.95rem;
-  line-height: 1;
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.chk:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.chk.on {
-  background: var(--blue-gradient);
-  border-color: var(--blue);
-  box-shadow: 0 0 12px rgba(10, 132, 255, 0.5);
-}
-
-/* Durum Rozetleri (Apple Translucent Pills) */
-.pill {
-  border: 0;
-  border-radius: var(--radius-pill);
-  padding: 6px 13px;
-  font-size: .8rem;
-  font-weight: 700;
-  min-height: 32px;
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-  transition: transform 0.15s;
-}
-
-.pill:active { transform: scale(0.96); }
-
-.s0 {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--muted);
-}
-
-.s1 {
-  background: var(--blue-soft);
-  color: var(--cyan);
-  border: 1px solid rgba(100, 210, 255, 0.3);
-}
-
-.s2 {
-  background: var(--teal-soft);
-  color: var(--teal);
-  border: 1px solid rgba(48, 209, 88, 0.3);
-}
-
-.s3 {
-  background: var(--amber-soft);
-  color: var(--amber);
-  border: 1px solid rgba(255, 159, 10, 0.3);
-}
-
-.ico {
-  border: 0;
-  background: transparent;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  color: var(--muted);
-  font-size: 1.05rem;
-  flex: none;
-  display: grid;
-  place-items: center;
-}
-
-.ico:hover, .ico.has {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--blue);
-}
-
-.note {
-  width: 100%;
-  margin: 4px 0 10px;
-  min-height: 72px;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.3);
-  color: var(--ink);
-  resize: vertical;
-  outline: none;
-  font-size: .9rem;
-}
-
-.note:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 12px rgba(10, 132, 255, 0.3);
-}
-
-.add-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.add-form input, .field input, .form input, .form select, .plan-add input {
-  flex: 1;
-  min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(18, 20, 27, 0.85);
-  color: var(--ink);
-  min-width: 0;
-  outline: none;
-  font-size: .93rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.add-form input:focus, .field input:focus, .form input:focus, .form select:focus, .plan-add input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 14px rgba(10, 132, 255, 0.35);
+  background: var(--blue);
 }
 
 /* ================== BUTONLAR (APPLE TACTILE BUTTONS) ================== */
@@ -2357,9 +2887,33 @@ main {
 }
 
 /* ================== MOBİL / DAR EKRAN ================== */
+@media (max-width: 1200px) {
+  .course-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .panel-grid-v3 {
+    flex-direction: column;
+  }
+  .col-right-side {
+    width: 100%;
+    min-width: 0;
+    position: static;
+    max-height: none;
+  }
+  .station-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .schedule-grid-7 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 820px) {
   .app {
-    grid-template-columns: minmax(0, 1fr);
+    display: block;
     padding-bottom: 78px;
   }
   .sidebar {
@@ -2367,19 +2921,20 @@ main {
     z-index: 40;
     inset: auto 0 0 0;
     height: auto;
+    width: 100%;
+    min-width: 0;
     flex-direction: row;
     padding: 6px 10px 8px;
     border-right: 0;
     border-top: 1px solid var(--line);
-    background: rgba(14, 16, 23, 0.92);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(10, 13, 19, 0.95);
   }
   .logo { display: none; }
   #nav {
     flex-direction: row;
     justify-content: space-around;
     gap: 4px;
+    width: 100%;
   }
   .nav-item {
     flex-direction: column;
@@ -2394,9 +2949,13 @@ main {
   .settings-btn {
     width: auto;
     min-width: 60px;
+    margin-top: 0;
   }
-  main {
+  main, #main {
     padding: 18px 16px 32px;
+  }
+  .course-grid-4 {
+    grid-template-columns: 1fr;
   }
 }
 

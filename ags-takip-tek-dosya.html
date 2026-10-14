@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c1017">
+  <meta name="theme-color" content="#0b0f16">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AGS Takip">
@@ -13,67 +13,62 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
 /* ==========================================================================
-   AGS & ÖABT KİMYA TAKİP - SÜRÜM 2.0 (APPLE PRO DESIGN SYSTEM)
-   Apple Human Interface Guidelines (iPadOS & macOS) Tasarımı
+   AGS & ÖABT KİMYA TAKİP - SÜRÜM 3.0 (PREMIUM DARK PANEL)
+   Hedef Cihaz: Yatay Tablet (1280–1440 px), Dokunmatik Odaklı & Mobil Uyumlu
    ========================================================================== */
 
 :root {
-  /* Renk Paleti - Apple Pro Dark Titanium & Deep Space */
-  --bg: #07080a;
-  --bg-gradient: radial-gradient(circle at 12% 15%, rgba(10, 132, 255, 0.08) 0%, transparent 45%),
-                 radial-gradient(circle at 88% 85%, rgba(94, 92, 230, 0.07) 0%, transparent 50%),
-                 radial-gradient(circle at 50% 50%, rgba(48, 209, 88, 0.03) 0%, transparent 60%);
-  --card: rgba(22, 24, 34, 0.75);
-  --card-solid: #151722;
-  --card-elevated: rgba(30, 34, 48, 0.82);
-  --card-hover: rgba(36, 41, 58, 0.9);
+  /* Renk Paleti */
+  --bg: #0b0f16;
+  --sidebar: #0a0d13;
+  --card: #121823;
+  --line: #1f2938;
+  --card-dark: #0b0f16;
 
-  /* Apple Tipografi & Kontrast */
-  --ink: #f5f5f7;
-  --ink-secondary: #a1a1a6;
-  --muted: #86868b;
-  --line: rgba(255, 255, 255, 0.09);
-  --line-light: rgba(255, 255, 255, 0.05);
-  --line-focus: rgba(10, 132, 255, 0.55);
+  /* Metin Renkleri */
+  --ink: #e8edf5;
+  --ink-sec: #9aa7ba;
+  --muted: #9aa7ba;
+  --helper: #c3cddb;
 
-  /* Apple Accent Renkleri */
-  --blue: #0a84ff;
-  --blue-gradient: linear-gradient(180deg, #2997ff 0%, #0071e3 100%);
-  --blue-soft: rgba(10, 132, 255, 0.16);
-  --indigo: #5e5ce6;
-  --indigo-soft: rgba(94, 92, 230, 0.18);
-  --teal: #30d158;
-  --teal-soft: rgba(48, 209, 88, 0.16);
-  --cyan: #64d2ff;
-  --cyan-soft: rgba(100, 210, 255, 0.16);
-  --amber: #ff9f0a;
-  --amber-soft: rgba(255, 159, 10, 0.16);
-  --rose: #ff453a;
-  --rose-soft: rgba(255, 69, 58, 0.16);
-  --purple: #bf5af2;
-  --purple-soft: rgba(191, 90, 242, 0.18);
+  /* Vurgu Renkleri */
+  --blue: #2563eb;
+  --blue-light: #5aa9ff;
+  --green: #34d399;
+  --amber: #f2b84b;
 
-  /* Apple Squircle Köşeler & Gölgeler */
-  --radius: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
+  /* Nötr Rozet */
+  --badge-neutral-text: #b4c0d2;
+  --badge-neutral-bg: #1b2434;
+
+  /* Seçili Kart */
+  --card-selected-border: #2563eb;
+  --card-selected-bg: #14203a;
+
+  /* Bugün Takvim Kutusu */
+  --today-bg: #1c2a45;
+  --today-border: #2563eb;
+
+  /* Ayarlar Penceresi */
+  --modal-bg: #151b26;
+  --modal-danger: #ff8a80;
+
+  /* Yuvarlak Köşeler */
+  --radius-card: 20px;
+  --radius-btn: 14px;
   --radius-pill: 9999px;
-  --shadow: 0 10px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --shadow-glow: 0 0 24px rgba(10, 132, 255, 0.3);
-  --shadow-glow-purple: 0 0 24px rgba(191, 90, 242, 0.28);
+  --radius-chk: 7px;
 }
 
-/* ================== GÜZEL BİR SCROLL (APPLE FLOATING GLASS SCROLLBAR) ================== */
+/* ================== GÜZEL BİR SCROLLBAR ================== */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  scroll-behavior: smooth;
+  scrollbar-color: #2b394e transparent;
 }
 
 ::-webkit-scrollbar {
@@ -86,19 +81,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.18);
+  background-color: #2b394e;
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
-  transition: background-color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.42);
+  background-color: #3f5270;
 }
 
 ::-webkit-scrollbar-thumb:active {
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: #5aa9ff;
 }
 
 ::-webkit-scrollbar-corner {
@@ -108,21 +103,30 @@
 /* ================== GENEL TEMEL STILLER ================== */
 html, body {
   margin: 0;
+  padding: 0;
   height: 100%;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro", "Plus Jakarta Sans", system-ui, "Helvetica Neue", sans-serif;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg);
-  background-image: var(--bg-gradient);
-  background-attachment: fixed;
+  background-image: none !important;
   color: var(--ink);
-  font-size: 15.5px;
-  line-height: 1.45;
-  letter-spacing: -0.012em;
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4,
+.overall-big-num,
+.kpi-num,
+.day-count,
+.course-progress-pct,
+.logo-text,
+.side-header-title,
+.chip-countdown .days-num {
+  font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 button, input, select, textarea {
@@ -133,44 +137,49 @@ button, input, select, textarea {
 button {
   cursor: pointer;
   border: 0;
-  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1),
-              background 0.2s ease,
-              border-color 0.2s ease,
-              box-shadow 0.2s ease;
+  transition: all 0.15s ease;
 }
 
-button:active {
-  transform: scale(0.975);
+:focus-visible {
+  outline: 2px solid var(--blue-light) !important;
+  outline-offset: 2px;
 }
 
-h1, h2, h3, h4 {
-  margin: 0;
-  letter-spacing: -0.024em;
-  font-weight: 700;
-  color: var(--ink);
+/* Kartlarda ve düz yüzeylerde gölge ve gradyan yok */
+.card,
+.card-overall,
+.card-station,
+.course-card-v3,
+.kpi-box,
+.day-box,
+.forgetting-rule-box,
+dialog#settings,
+.chip-countdown {
+  box-shadow: none !important;
+  background-image: none !important;
 }
 
 .muted {
-  color: var(--muted);
-  font-size: .88rem;
-  letter-spacing: -0.01em;
+  color: var(--ink-sec);
+  font-size: 14px;
 }
 
 .spacer { flex: 1; }
 
-/* ================== YERLEŞİM (APPLE SIDEBAR & MAIN) ================== */
+/* ================== YERLEŞİM (SIDEBAR & MAIN) ================== */
 .app {
-  display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
-  min-height: 100%;
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
 }
 
 .sidebar {
-  background: rgba(14, 16, 23, 0.85);
-  backdrop-filter: blur(36px) saturate(190%);
-  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  width: 240px;
+  min-width: 240px;
+  flex-shrink: 0;
+  background: var(--sidebar);
   border-right: 1px solid var(--line);
-  padding: 24px 14px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -178,35 +187,42 @@ h1, h2, h3, h4 {
   top: 0;
   height: 100vh;
   z-index: 30;
+  overflow-y: auto;
 }
 
 .logo {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 12px 22px;
-  font-weight: 800;
-  font-size: 1.18rem;
-  letter-spacing: -0.025em;
-  color: var(--ink);
+  padding: 0 4px 20px 4px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--line);
 }
 
-.logo-mark {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
+.logo-box, .logo-mark {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0a84ff 0%, #5e5ce6 100%);
-  color: #fff;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.4);
+  background: var(--blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-box svg, .logo-mark svg {
+  width: 22px;
+  height: 22px;
 }
 
 .logo-text {
-  background: linear-gradient(180deg, #ffffff 0%, #d1d5db 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
 }
 
 #nav {
@@ -219,25 +235,28 @@ h1, h2, h3, h4 {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
+  height: 48px;
   min-height: 48px;
   padding: 0 16px;
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   background: transparent;
-  color: var(--ink-secondary);
-  font-weight: 600;
-  font-size: .94rem;
+  color: var(--helper);
+  font-weight: 500;
+  font-size: 15px;
   text-align: left;
   width: 100%;
-  position: relative;
-  letter-spacing: -0.015em;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
 .nav-item .ni {
   width: 22px;
   height: 22px;
-  display: inline-flex;
-  opacity: .85;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-item svg {
@@ -246,126 +265,967 @@ h1, h2, h3, h4 {
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
 }
 
 .nav-item.active {
-  background: var(--blue-gradient);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(10, 132, 255, 0.42);
+  background: var(--blue);
+  color: #ffffff;
+  font-weight: 600;
 }
 
-.nav-item.active .ni {
-  opacity: 1;
+.nav-item .rozet {
+  margin-left: auto;
+  background: var(--amber);
+  color: #0b0f16;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
 }
 
 .settings-btn {
-  color: var(--muted);
-  border: 1px solid transparent;
+  margin-top: auto;
+  color: var(--helper);
 }
 
 .settings-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+}
+
+main, #main {
+  flex: 1;
+  min-width: 0;
+  padding: 32px 36px;
+  overflow-y: auto;
+}
+
+/* ================== BAŞLIK & GERİ SAYIM ROZETLERİ ================== */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.head h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.head-badges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chip-countdown {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-countdown:hover {
+  border-color: var(--blue-light);
+}
+
+.chip-countdown svg {
+  width: 20px;
+  height: 20px;
+  color: var(--blue-light);
+}
+
+.chip-countdown .days-num {
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* Eski chip yapısı uyumluluğu */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--card);
+  border: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.chip b {
+  color: var(--blue-light);
+  font-weight: 700;
+}
+
+/* ================== PANEL İKİ SÜTUNLU YERLEŞİM ================== */
+.panel-grid-v3 {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.col-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.col-right-side {
+  width: 440px;
+  min-width: 440px;
+  flex-shrink: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  position: sticky;
+  top: 32px;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================== SOL SÜTUN a) GENEL İLERLEME KARTI ================== */
+.card-overall {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.overall-top {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.ring-wrap {
+  width: 140px;
+  height: 140px;
+  min-width: 140px;
+  min-height: 140px;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overall-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overall-big-num {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.overall-sub-text {
+  font-size: 15px;
+  color: var(--ink-sec);
+  margin-top: 4px;
+}
+
+.overall-sub-exams {
+  font-size: 15px;
+  color: var(--ink-sec);
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.badge-pill {
+  height: 36px;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.badge-green {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.badge-blue {
+  background: rgba(90, 169, 255, 0.12);
+  color: var(--blue-light);
+  border: 1px solid rgba(90, 169, 255, 0.3);
+}
+
+.badge-amber {
+  background: rgba(242, 184, 75, 0.12);
+  color: var(--amber);
+  border: 1px solid rgba(242, 184, 75, 0.3);
+}
+
+.badge-neutral {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+  border: 1px solid var(--line);
+}
+
+/* ================== SOL SÜTUN b) AKILLI HAFIZA & TEKRAR İSTASYONU ================== */
+.card-station {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.station-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.station-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.station-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.station-subtitle {
+  font-size: 14px;
+  color: var(--ink-sec);
+}
+
+.station-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.kpi-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpi-box .kpi-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.kpi-box .kpi-desc {
+  font-size: 14px;
+  color: var(--ink-sec);
+  line-height: 1.3;
+}
+
+.forgetting-rule-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--helper);
+}
+
+.forgetting-rule-box strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Bekleyen tekrarlar */
+.ti-list-due {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ti-item-due {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ti-item-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+.ti-item-meta {
+  font-size: 13px;
+  color: var(--amber);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.ti-item-meta .gecikme {
+  color: #ff8a80;
+}
+
+.ti-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ti-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-repeat-ok {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--blue);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.btn-repeat-defer {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--helper);
+  font-size: 14px;
+}
+
+.schedule-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-heading {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.schedule-grid-7 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.day-box {
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.day-box .day-lbl {
+  font-size: 13px;
+  color: var(--ink-sec);
+}
+
+.day-box .day-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.day-box .day-date {
+  font-size: 12px;
+  color: var(--ink-sec);
+}
+
+.day-box.is-today {
+  border: 1px solid var(--today-border) !important;
+  background: var(--today-bg) !important;
+}
+
+.day-box.is-today .day-lbl {
+  color: var(--blue-light);
+  font-weight: 600;
+}
+
+.day-box.is-today .day-count {
+  color: #ffffff;
+}
+
+/* ================== SOL SÜTUN c) DERS KARTLARI (4 SÜTUNLU IZGARA) ================== */
+.course-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.course-card-v3 {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 110px;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.course-card-v3:hover {
+  border-color: #2b394e;
+}
+
+.course-card-v3.active {
+  border-color: var(--card-selected-border) !important;
+  background: var(--card-selected-bg) !important;
+}
+
+.course-top-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.course-title-text {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.course-questions-text {
+  font-size: 14px;
+  color: var(--ink-sec);
+}
+
+.course-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.course-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--card-dark);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.course-progress-fill {
+  height: 100%;
+  background: var(--blue);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease;
+}
+
+.course-progress-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-sec);
+  min-width: 32px;
+  text-align: right;
+}
+
+.course-card-v3.active .course-progress-pct {
+  color: var(--blue-light);
+}
+
+/* ================== SAĞ PANEL (440 px KONU PANELİ) ================== */
+.side-header-sticky {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 5;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.side-resource-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.side-resource-empty {
+  font-size: 14px;
+  color: var(--ink-sec);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-resource-link {
+  font-size: 14px;
+  color: var(--blue-light);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-resource-link:hover {
+  text-decoration: underline;
+}
+
+.btn-icon-44 {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-sec);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-icon-44:hover {
+  background: var(--card-dark);
   border-color: var(--line);
   color: var(--ink);
 }
 
-main {
-  padding: 30px 36px 48px;
-  min-width: 0;
-  -webkit-overflow-scrolling: touch;
+.btn-icon-44.has-note {
+  color: var(--blue-light);
 }
 
-/* ================== BAŞLIK & APPLE GERİ SAYIM ÇİPLERİ ================== */
-.head {
+.btn-filter-repeat {
+  height: 44px;
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card-dark);
+  color: var(--helper);
+  font-size: 14px;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-bottom: 26px;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.head h1 {
-  font-size: 1.85rem;
+.btn-filter-repeat:hover {
+  border-color: var(--blue-light);
+  color: var(--ink);
+}
+
+.btn-filter-repeat.active {
+  border-color: var(--blue);
+  background: var(--card-selected-bg);
+  color: var(--blue-light);
+}
+
+.side-topics-scroll {
+  overflow-y: auto;
+  padding: 16px 24px 24px 24px;
   flex: 1;
-  min-width: 180px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  min-height: 0;
 }
 
-.chip {
+.topic-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.topic-group-title {
+  color: var(--blue-light);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.topic-group-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-sec);
+}
+
+.topic-list-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topic-row-item {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+}
+
+.topic-row-item.done .topic-name-text {
+  text-decoration: line-through;
+  color: var(--ink-sec);
+}
+
+.chk-box-custom {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  border: 2px solid #3a475c;
+  border-radius: var(--radius-chk);
+  background-color: transparent;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 9px 16px;
-  border-radius: var(--radius-pill);
-  background: var(--card);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  font-size: .92rem;
-  font-weight: 600;
+  justify-content: center;
+  margin: 0;
+  transition: all 0.15s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.chk-box-custom:checked {
+  background-color: var(--green);
+  border-color: var(--green);
+}
+
+.chk-box-custom:checked::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 11px;
+  border: solid var(--card-dark);
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+  top: 4px;
+}
+
+.topic-name-text {
+  font-size: 15px;
   color: var(--ink);
-  transition: border-color 0.2s, transform 0.2s;
+  line-height: 1.35;
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.chip:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
-}
-
-.chip svg {
-  width: 17px;
-  height: 17px;
-  color: var(--cyan);
-}
-
-.chip b {
-  color: var(--cyan);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.chip small {
-  color: var(--muted);
+.topic-status-pill {
+  height: 34px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
   font-weight: 500;
-  margin-left: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-/* ================== APPLE KARTLAR & İLERLEME ÇUBUĞU ================== */
+.topic-status-pill.s0 {
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
+  border: 1px solid var(--line);
+}
+
+.topic-status-pill.s1 {
+  background: rgba(90, 169, 255, 0.12);
+  color: var(--blue-light);
+  border: 1px solid rgba(90, 169, 255, 0.3);
+}
+
+.topic-status-pill.s2 {
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.topic-status-pill.s3 {
+  background: rgba(242, 184, 75, 0.12);
+  color: var(--amber);
+  border: 1px solid rgba(242, 184, 75, 0.3);
+}
+
+.topic-note-editor {
+  border-top: 1px dashed var(--line);
+  padding: 10px 0 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.note-textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card-dark);
+  color: var(--ink);
+  resize: vertical;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* ================== AYARLAR PENCERESİ (480 px, #151b26, 24 px) ================== */
+dialog#settings {
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  background: var(--modal-bg);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 28px 32px;
+  color: var(--ink);
+  box-shadow: none;
+}
+
+dialog#settings::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: var(--ink-sec);
+  margin-top: 6px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.field-label {
+  display: block;
+  font-size: 14px;
+  color: var(--helper);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.input-dark-48 {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 15px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input-dark-48:focus, .note-textarea:focus {
+  border-color: var(--blue-light);
+}
+
+.modal-divider {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 20px 0;
+}
+
+.modal-subtitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ink);
+}
+
+.backup-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-backup {
+  height: 48px;
+  min-height: 48px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-backup:hover {
+  border-color: var(--blue-light);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-reset-danger {
+  background: transparent;
+  border: 0;
+  color: var(--modal-danger);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px 0;
+  min-height: 44px;
+}
+
+.btn-reset-danger:hover {
+  text-decoration: underline;
+}
+
+.btn-close-amber {
+  height: 48px;
+  min-height: 48px;
+  padding: 0 28px;
+  background: var(--amber);
+  color: #0b0f16;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-close-amber:hover {
+  opacity: 0.9;
+}
+
+/* ================== BUTONLAR VE ESKİ ELEMAN UYUMLULUĞU ================== */
 .card {
   background: var(--card);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 24px;
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
   position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  pointer-events: none;
 }
 
 .card h2 {
-  font-size: 1.22rem;
-  letter-spacing: -0.022em;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
 }
 
 .bar {
   height: 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--card-dark);
   border-radius: var(--radius-pill);
   overflow: hidden;
   flex: 1;
@@ -374,343 +1234,13 @@ main {
 .bar > i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #0a84ff 0%, #30d158 100%);
+  background: var(--blue);
   border-radius: var(--radius-pill);
-  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  box-shadow: 0 0 10px rgba(48, 209, 88, 0.4);
+  transition: width 0.3s ease;
 }
 
 .bar.indigo > i {
-  background: linear-gradient(90deg, #5e5ce6 0%, #bf5af2 100%);
-  box-shadow: 0 0 10px rgba(191, 90, 242, 0.4);
-}
-
-/* ================== GENEL BAKIŞ / PANEL ================== */
-.panel-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(340px, 1fr);
-  gap: 22px;
-  align-items: start;
-}
-
-.overall {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
-}
-
-.ring {
-  position: relative;
-  width: 140px;
-  height: 140px;
-  flex: none;
-  filter: drop-shadow(0 0 14px rgba(10, 132, 255, 0.3));
-}
-
-.ring svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.ring .t {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: 1.85rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #fff;
-}
-
-.overall-info {
-  flex: 1;
-  min-width: 200px;
-}
-
-.overall-info .big {
-  font-size: 2.3rem;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: #fff;
-}
-
-.stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-}
-
-.stat {
-  padding: 6px 13px;
-  border-radius: var(--radius-pill);
-  font-size: .86rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
-  color: var(--ink-secondary);
-}
-
-.courses {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 15px;
-}
-
-.course {
-  text-align: left;
-  border: 1px solid var(--line);
-  background: var(--card-solid);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 18px;
-  min-height: 98px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.course:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.course.active {
-  border-color: var(--blue);
-  background: rgba(10, 132, 255, 0.12);
-  box-shadow: 0 0 18px rgba(10, 132, 255, 0.25);
-}
-
-.course .ct {
-  font-weight: 700;
-  font-size: .98rem;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-}
-
-.course .cs {
-  color: var(--muted);
-  font-size: .84rem;
-  font-weight: 500;
-}
-
-.course .pr {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: .88rem;
-  font-weight: 700;
-  color: var(--ink-secondary);
-}
-
-.course.oabt .bar > i {
-  background: linear-gradient(90deg, #5e5ce6 0%, #bf5af2 100%);
-  box-shadow: 0 0 10px rgba(191, 90, 242, 0.4);
-}
-
-.side {
-  position: sticky;
-  top: 24px;
-  max-height: calc(100vh - 48px);
-  display: flex;
-  flex-direction: column;
-}
-
-.side .scroll {
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-top: 12px;
-  padding-right: 4px;
-}
-
-/* ================== KONU LİSTESİ (APPLE GROUPED INSET) ================== */
-.group-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 18px 0 8px;
-  font-weight: 700;
-  color: var(--cyan);
-  font-size: .96rem;
-  letter-spacing: -0.015em;
-}
-
-.group-title .gp {
-  margin-left: auto;
-  font-weight: 600;
-  color: var(--muted);
-  font-size: .84rem;
-}
-
-.konular {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.konu {
-  border-bottom: 1px solid var(--line-light);
-  padding: 6px 0;
-  transition: background 0.15s;
-}
-
-.konu:last-child {
-  border-bottom: 0;
-}
-
-.konu .r {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 52px;
-}
-
-.konu .kad {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  font-size: .94rem;
-  color: var(--ink);
-  letter-spacing: -0.01em;
-}
-
-.konu.done .kad {
-  color: var(--muted);
-  text-decoration: line-through;
-  text-decoration-color: rgba(255, 255, 255, 0.25);
-}
-
-.chk {
-  width: 26px;
-  height: 26px;
-  flex: none;
-  border-radius: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  font-size: 0.95rem;
-  line-height: 1;
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.chk:hover {
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.chk.on {
-  background: var(--blue-gradient);
-  border-color: var(--blue);
-  box-shadow: 0 0 12px rgba(10, 132, 255, 0.5);
-}
-
-/* Durum Rozetleri (Apple Translucent Pills) */
-.pill {
-  border: 0;
-  border-radius: var(--radius-pill);
-  padding: 6px 13px;
-  font-size: .8rem;
-  font-weight: 700;
-  min-height: 32px;
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-  transition: transform 0.15s;
-}
-
-.pill:active { transform: scale(0.96); }
-
-.s0 {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--muted);
-}
-
-.s1 {
-  background: var(--blue-soft);
-  color: var(--cyan);
-  border: 1px solid rgba(100, 210, 255, 0.3);
-}
-
-.s2 {
-  background: var(--teal-soft);
-  color: var(--teal);
-  border: 1px solid rgba(48, 209, 88, 0.3);
-}
-
-.s3 {
-  background: var(--amber-soft);
-  color: var(--amber);
-  border: 1px solid rgba(255, 159, 10, 0.3);
-}
-
-.ico {
-  border: 0;
-  background: transparent;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  color: var(--muted);
-  font-size: 1.05rem;
-  flex: none;
-  display: grid;
-  place-items: center;
-}
-
-.ico:hover, .ico.has {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--blue);
-}
-
-.note {
-  width: 100%;
-  margin: 4px 0 10px;
-  min-height: 72px;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(0, 0, 0, 0.3);
-  color: var(--ink);
-  resize: vertical;
-  outline: none;
-  font-size: .9rem;
-}
-
-.note:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 12px rgba(10, 132, 255, 0.3);
-}
-
-.add-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.add-form input, .field input, .form input, .form select, .plan-add input {
-  flex: 1;
-  min-height: 46px;
-  padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(18, 20, 27, 0.85);
-  color: var(--ink);
-  min-width: 0;
-  outline: none;
-  font-size: .93rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.add-form input:focus, .field input:focus, .form input:focus, .form select:focus, .plan-add input:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 14px rgba(10, 132, 255, 0.35);
+  background: var(--blue);
 }
 
 /* ================== BUTONLAR (APPLE TACTILE BUTTONS) ================== */
@@ -2374,9 +2904,33 @@ main {
 }
 
 /* ================== MOBİL / DAR EKRAN ================== */
+@media (max-width: 1200px) {
+  .course-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .panel-grid-v3 {
+    flex-direction: column;
+  }
+  .col-right-side {
+    width: 100%;
+    min-width: 0;
+    position: static;
+    max-height: none;
+  }
+  .station-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .schedule-grid-7 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 @media (max-width: 820px) {
   .app {
-    grid-template-columns: minmax(0, 1fr);
+    display: block;
     padding-bottom: 78px;
   }
   .sidebar {
@@ -2384,19 +2938,20 @@ main {
     z-index: 40;
     inset: auto 0 0 0;
     height: auto;
+    width: 100%;
+    min-width: 0;
     flex-direction: row;
     padding: 6px 10px 8px;
     border-right: 0;
     border-top: 1px solid var(--line);
-    background: rgba(14, 16, 23, 0.92);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    background: rgba(10, 13, 19, 0.95);
   }
   .logo { display: none; }
   #nav {
     flex-direction: row;
     justify-content: space-around;
     gap: 4px;
+    width: 100%;
   }
   .nav-item {
     flex-direction: column;
@@ -2411,9 +2966,13 @@ main {
   .settings-btn {
     width: auto;
     min-width: 60px;
+    margin-top: 0;
   }
-  main {
+  main, #main {
     padding: 18px 16px 32px;
+  }
+  .course-grid-4 {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2428,7 +2987,15 @@ main {
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="logo"><span class="logo-mark">⚗</span><span class="logo-text">AGS Takip</span></div>
+      <div class="logo">
+        <div class="logo-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 2v6.5L4.5 18A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 8.5V2h-4z"/>
+            <path d="M8.5 2h7M7 16h10"/>
+          </svg>
+        </div>
+        <span class="logo-text">AGS Takip</span>
+      </div>
       <nav id="nav"></nav>
       <button class="nav-item settings-btn" data-a="settings"><span class="ni" id="ico-settings"></span><span>Ayarlar</span></button>
     </aside>
@@ -2436,28 +3003,25 @@ main {
   </div>
 
   <dialog id="settings">
-    <h2>Ayarlar</h2>
-    <p class="muted">ÖSYM 2027 sınav tarihlerini açıkladığında buraya girin.</p>
-    <label class="field">AGS tarihi
-      <input type="date" id="d-ags">
-    </label>
-    <label class="field">ÖABT tarihi
-      <input type="date" id="d-oabt">
-    </label>
-    <hr>
-    <h3>Yedekleme</h3>
-    <p class="muted">İlerleme bu tabletin tarayıcısında saklanır. Tarayıcı verisi silinirse kaybolur; arada yedek alın.</p>
-    <div class="row">
-      <button class="btn" data-a="export">Yedeği indir</button>
-      <label class="btn btn-ghost">Yedeği yükle
+    <h2 class="modal-title">Ayarlar</h2>
+    <p class="modal-desc">ÖSYM 2027 sınav tarihlerini açıkladığında buraya girin.</p>
+    <label class="field-label" for="d-ags">AGS tarihi</label>
+    <input type="date" id="d-ags" class="input-dark-48">
+    <label class="field-label" for="d-oabt">ÖABT tarihi</label>
+    <input type="date" id="d-oabt" class="input-dark-48">
+    <hr class="modal-divider">
+    <h3 class="modal-subtitle">Yedekleme</h3>
+    <p class="modal-desc">İlerleme bu tabletin tarayıcısında saklanır. Tarayıcı verisi silinirse kaybolur; arada yedek alın.</p>
+    <div class="backup-btn-grid">
+      <button class="btn-backup" data-a="export">Yedeği indir</button>
+      <label class="btn-backup">Yedeği yükle
         <input type="file" id="import" accept="application/json,.json" hidden>
       </label>
     </div>
-    <hr>
-    <div class="row">
-      <button class="btn btn-danger" data-a="reset">Tüm verileri sıfırla</button>
-      <span class="spacer"></span>
-      <button class="btn btn-primary" data-a="closeSettings">Kapat</button>
+    <hr class="modal-divider">
+    <div class="modal-footer">
+      <button class="btn-reset-danger" data-a="reset">Tüm verileri sıfırla</button>
+      <button class="btn-close-amber" data-a="closeSettings">Kapat</button>
     </div>
   </dialog>
 
@@ -3033,17 +3597,22 @@ window.DERSLER = [
 
   /* ================= İkonlar ================= */
   var svg = function (p) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
   };
   var IC = {
-    panel: svg('<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>'),
-    ags: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>'),
+    panel: svg('<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>'),
+    ags: svg('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),
     oabt: svg('<path d="M9 3h6M10 3v6L4.5 19a1.6 1.6 0 0 0 1.4 2.4h12.2a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7.5 15h9"/>'),
-    deneme: svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>'),
-    plan: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
-    sureler: svg('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>'),
+    deneme: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
+    plan: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    sureler: svg('<circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/>'),
     settings: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
-    cal: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>')
+    cal: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    flask: svg('<path d="M10 2v6.5L4.5 18A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 8.5V2h-4z"/><path d="M8.5 2h7M7 16h10"/>'),
+    pen: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>'),
+    check: svg('<polyline points="20 6 9 17 4 12"/>'),
+    trash: svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+    play: svg('<polygon points="5 3 19 12 5 21 5 3"/>')
   };
 
   /* ================= Veri ================= */
@@ -3192,22 +3761,17 @@ window.DERSLER = [
     var n = tk.n || 0;
     var gunFarki = kalanGun(tk.sonraki);
     var asamaMetin = '';
-    var ikon = '🌱';
     if (n === 0) {
       asamaMetin = '1. Hafta Tekrarı';
-      ikon = '🌱';
     } else if (n === 1) {
       asamaMetin = '3. Hafta Tekrarı';
-      ikon = '🌿';
     } else {
       asamaMetin = (n + 1) + '. Tekrar (Aylık)';
-      ikon = '💎';
     }
     var vaktGeldi = (tk.sonraki <= bugun);
     return {
       n: n,
       asamaMetin: asamaMetin,
-      ikon: ikon,
       sonraki: tk.sonraki,
       gunFarki: gunFarki,
       vaktGeldi: vaktGeldi
@@ -3337,60 +3901,61 @@ window.DERSLER = [
     var toplamYapilan = (S.istatistik && S.istatistik.toplamTekrar) || 0;
     var gelecekGunler = gelecek7GunTekrarlari();
 
-    var h = '<div class="card tekrar-istasyonu">' +
-      '<div class="ti-head">' +
-        '<div class="ti-title">' +
-          '<h2>🧠 Akıllı Hafıza &amp; Tekrar İstasyonu</h2>' +
-          '<span class="muted">1. Hafta → 3. Hafta → Aylık Bilimsel Unutma Eğrisi Takibi</span>' +
+    var statusBadge = (liste.length === 0)
+      ? '<span class="badge-pill badge-green">Tüm Tekrarlar Tamam</span>'
+      : '<span class="badge-pill badge-amber">' + liste.length + ' tekrar bekliyor</span>';
+
+    var h = '<div class="card-station">' +
+      '<div class="station-header">' +
+        '<div class="station-title-box">' +
+          '<h2 class="station-title">Akıllı Hafıza &amp; Tekrar İstasyonu</h2>' +
+          '<span class="station-subtitle">1. Hafta → 3. Hafta → Aylık · Bilimsel Unutma Eğrisi Takibi</span>' +
         '</div>' +
-        '<span class="stat ' + (liste.length ? 's3' : 's2') + '">' + (liste.length ? liste.length + ' Tekrar Zamanı' : 'Tüm Tekrarlar Tamam') + '</span>' +
+        statusBadge +
       '</div>';
 
-    // 4'lü Motivasyon ve Başarı Kartları
-    h += '<div class="ti-kpis">' +
-      '<div class="ti-kpi fire"><b>🔥 ' + seri + ' Gün</b><span>Tekrar Serisi</span></div>' +
-      '<div class="ti-kpi gem"><b>💎 ' + kaliciHafiza + ' Konu</b><span>Kalıcı Hafızada (2+ Tekrar)</span></div>' +
-      '<div class="ti-kpi bell"><b>🔔 ' + liste.length + ' Konu</b><span>Bugün Tekrar Zamanı</span></div>' +
-      '<div class="ti-kpi target"><b>🎯 ' + toplamYapilan + ' Tekrar</b><span>Toplam Yapılan Tekrar</span></div>' +
+    // 4 eşit sayaç kutusu (#0b0f16, 14 px yuvarlak)
+    h += '<div class="station-kpis">' +
+      '<div class="kpi-box"><div class="kpi-num">' + seri + '</div><div class="kpi-desc">Gün tekrar serisi</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + kaliciHafiza + '</div><div class="kpi-desc">Konu kalıcı hafızada (2+ tekrar)</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + liste.length + '</div><div class="kpi-desc">Konu bugün tekrar zamanı</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + toplamYapilan + '</div><div class="kpi-desc">Toplam yapılan tekrar</div></div>' +
     '</div>';
 
-    // Motivasyon ve Bilimsel Unutma Notu
-    h += '<div class="ti-ipucu">' +
-      '💡 <b>Unutma Eğrisi Kuralı:</b> Biten bir konu <b>1 hafta sonra</b> %70 oranında unutulur. Tam zamanında yapacağınız 10 dakikalık 1. ve 3. hafta tekrarları, konuyu sınav gününe kadar kalıcı belleğinize mühürler.' +
+    // Unutma Eğrisi Kuralı
+    h += '<div class="forgetting-rule-box">' +
+      '<strong>Unutma Eğrisi Kuralı:</strong> Biten bir konu 1 hafta sonra %70 oranında unutulur. Tam zamanında yapacağınız 10 dakikalık 1. ve 3. hafta tekrarları, konuyu sınav gününe kadar kalıcı belleğinize mühürler.' +
     '</div>';
 
-    // Bugün Bekleyen Tekrarlar Listesi
-    if (!liste.length) {
-      h += '<div class="ti-empty">' +
-        '🎉 <b>Harika gidiyorsunuz!</b> Bugün tekrar bekleyen konu yok. Öğrendiğiniz ' + tumBitenler + ' konu hafızanızda güvende!' +
-      '</div>';
-    } else {
-      h += '<div class="ti-list">';
+    // Bugün bekleyen tekrarlar (varsa)
+    if (liste.length > 0) {
+      h += '<div class="ti-list-due">';
       liste.forEach(function (x) {
         var gecText = (x.info && x.info.gunFarki < 0) ? ' <b class="gecikme">(' + Math.abs(x.info.gunFarki) + ' gün gecikti)</b>' : '';
-        h += '<div class="ti-item">' +
-          '<div class="ti-item-info">' +
-            '<div class="ti-item-badge">' + esc(x.d.kisa) + ' · ' + (x.info ? x.info.asamaMetin : 'Tekrar') + gecText + '</div>' +
-            '<div class="ti-item-name">' + esc(x.k.ad) + '</div>' +
+        h += '<div class="ti-item-due">' +
+          '<div class="ti-item-left">' +
+            '<div class="ti-item-meta">' + esc(x.d.kisa) + ' · ' + (x.info ? x.info.asamaMetin : 'Tekrar') + gecText + '</div>' +
+            '<div class="ti-item-title">' + esc(x.k.ad) + '</div>' +
           '</div>' +
           '<div class="ti-item-actions">' +
-            '<button class="btn btn-primary btn-tekrar" data-a="tekrarok" data-id="' + esc(x.k.id) + '">✓ Tekrar Ettim</button>' +
-            '<button class="btn btn-ghost btn-sm" data-a="tekrarertele" data-id="' + esc(x.k.id) + '">Yarın Hatırlat</button>' +
+            '<button class="btn-repeat-ok" data-a="tekrarok" data-id="' + esc(x.k.id) + '">Tekrar Ettim</button>' +
+            '<button class="btn-repeat-defer" data-a="tekrarertele" data-id="' + esc(x.k.id) + '">Yarın Hatırlat</button>' +
           '</div>' +
         '</div>';
       });
       h += '</div>';
     }
 
-    // Gelecek 7 Gün Tekrar Çizelgesi
-    h += '<div class="ti-takvim-wrap">' +
-      '<div class="ti-takvim-title">📅 <b>Önümüzdeki 7 Günlük Tekrar Takvimi</b> <small class="muted">(Günü geldikçe bu listeye düşer)</small></div>' +
-      '<div class="ti-takvim">';
-    gelecekGunler.forEach(function (g) {
-      h += '<div class="ti-gun' + (g.sayi > 0 ? ' has-tekrar' : '') + '">' +
-        '<span class="g-lbl">' + g.etiket + '</span>' +
-        '<b class="g-num">' + g.sayi + '</b>' +
-        '<small class="g-dt">' + g.kisaTarih + '</small>' +
+    // 7 Günlük Tekrar Takvimi
+    h += '<div class="schedule-section">' +
+      '<div class="schedule-heading">Önümüzdeki 7 günlük tekrar takvimi · günü geldikçe bu listeye düşer</div>' +
+      '<div class="schedule-grid-7">';
+    gelecekGunler.forEach(function (g, idx) {
+      var isToday = (idx === 0);
+      h += '<div class="day-box' + (isToday ? ' is-today' : '') + '">' +
+        '<span class="day-lbl">' + g.etiket + '</span>' +
+        '<b class="day-count">' + g.sayi + '</b>' +
+        '<small class="day-date">' + g.kisaTarih + '</small>' +
       '</div>';
     });
     h += '</div></div></div>';
@@ -3411,16 +3976,25 @@ window.DERSLER = [
   function sayacChip(ad, tarih) {
     var n = kalanGun(tarih);
     var yazi;
-    if (n === null || isNaN(n)) yazi = ad + ': tarih seçin';
-    else if (n < 0) yazi = ad + ' tarihi geçti';
-    else if (n === 0) yazi = ad + ' bugün!';
-    else yazi = ad + '\'ye <b>' + n + ' gün</b>';
-    return '<button class="chip" data-a="settings" title="Tarihi değiştir: ' + esc(fmtTarih(tarih)) + '">' + IC.cal + '<span>' + yazi + '</span></button>';
+    if (n === null || isNaN(n) || !tarih) {
+      yazi = ad + ': Tarih gir';
+    } else if (n < 0) {
+      yazi = ad + ' tarihi geçti';
+    } else if (n === 0) {
+      yazi = ad + ' bugün!';
+    } else {
+      yazi = ad + '\'ye <span class="days-num">' + n + ' gün</span>';
+    }
+    return '<button class="chip-countdown" data-a="settings" aria-label="' + esc(ad) + ' sınav tarihi ayarları">' +
+      IC.cal + '<span>' + yazi + '</span></button>';
   }
 
   function head(baslik) {
     return '<div class="head"><h1>' + esc(baslik) + '</h1>' +
-      sayacChip('AGS', S.tarih.ags) + sayacChip('ÖABT', S.tarih.oabt) + '</div>';
+      '<div class="head-badges">' +
+      sayacChip('AGS', S.tarih.ags) +
+      sayacChip('ÖABT', S.tarih.oabt) +
+      '</div></div>';
   }
 
   /* ================= Konu listesi bileşeni ================= */
@@ -3431,23 +4005,22 @@ window.DERSLER = [
       if (etkinDurum(k.id) === 3) tekrarSayisi++;
     });
 
-    return '<div class="kaynak-bar">' +
-      '<div class="kaynak">' +
-        (u ? '<a class="klink" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">▶ Ders kaynağı: ' + esc(urlHost(u)) + '</a>'
-           : '<span class="muted">Ders kaynağı (YouTube listesi vb.) eklenmemiş</span>') +
-        '<button class="ico" data-a="derslink" data-id="' + d.id + '" title="Ders kaynağı linkini düzenle">✎</button>' +
+    var kaynakHtml = u
+      ? '<a class="side-resource-link" href="' + esc(urlDuzelt(u)) + '" target="_blank" rel="noopener noreferrer">Ders kaynağı: ' + esc(urlHost(u)) + '</a>'
+      : '<span class="side-resource-empty">Ders kaynağı (YouTube listesi vb.) eklenmemiş</span>';
+
+    return '<div class="side-resource-row">' +
+        kaynakHtml +
+        '<button class="btn-icon-44" data-a="derslink" data-id="' + d.id + '" aria-label="Ders kaynağını düzenle" title="Ders kaynağı linkini düzenle">' + IC.pen + '</button>' +
       '</div>' +
-      '<div class="filtre-wrap">' +
-        '<button class="btn btn-sm btn-filter' + (ui.sadeceTekrar ? ' active' : '') + '" data-a="tekrarfiltre">' +
-          (ui.sadeceTekrar ? 'Tüm Konuları Göster' : '🔔 Sadece Tekrar Bekleyenler' + (tekrarSayisi ? ' (' + tekrarSayisi + ')' : '')) +
-        '</button>' +
-      '</div>' +
-    '</div>';
+      '<button class="btn-filter-repeat' + (ui.sadeceTekrar ? ' active' : '') + '" data-a="tekrarfiltre">' +
+        (ui.sadeceTekrar ? 'Tüm Konuları Göster' : 'Sadece tekrar bekleyenler' + (tekrarSayisi ? ' (' + tekrarSayisi + ')' : '')) +
+      '</button>';
   }
 
   function konuListesi(d, opts) {
     opts = opts || {};
-    var html = dersKaynak(d);
+    var html = '';
     gruplar(d).forEach(function (g) {
       var filtrelenmis = g.konular.filter(function (k) {
         if (!ui.sadeceTekrar) return true;
@@ -3456,61 +4029,55 @@ window.DERSLER = [
 
       if (filtrelenmis.length > 0 || !ui.sadeceTekrar) {
         if (g.ad) {
-          html += '<div class="group-title"><span>' + esc(g.ad) + '</span><span class="gp">%' + ilerleme(g.konular) + '</span></div>';
+          html += '<div class="topic-group-header">' +
+            '<span class="topic-group-title">' + esc(g.ad) + '</span>' +
+            '<span class="topic-group-pct">%' + ilerleme(g.konular) + '</span>' +
+          '</div>';
         }
-        html += '<ul class="konular">';
+        html += '<ul class="topic-list-ul">';
         filtrelenmis.forEach(function (k) {
           var st = etkinDurum(k.id);
           var notVar = !!S.notlar[k.id];
           var link = S.linkler[k.id];
-          var info = asamaBilgisi(k.id);
-          var sub = '';
-          var alarmMi = (st === 3);
 
-          if (alarmMi) {
-            var gecStr = (info && info.gunFarki < 0) ? ' (' + Math.abs(info.gunFarki) + ' gün gecikti)' : ' (Günü Geldi!)';
-            sub = '<span class="sub alarm">⚠️ ' + (info ? info.asamaMetin : 'Tekrar') + ' zamanı!' + gecStr + '</span>';
-          } else if (st === 2 && info) {
-            sub = '<span class="sub">' + info.ikon + ' ' + info.asamaMetin + ' · ' + info.gunFarki + ' gün kaldı (' + fmtKisa(info.sonraki) + ')</span>';
-          }
-
-          html += '<li class="konu' + (st === 2 ? ' done' : '') + (alarmMi ? ' tekrar-alarm' : '') + '">' +
-            '<div class="r">' +
-            '<button class="chk' + (st === 2 ? ' on' : '') + (alarmMi ? ' chk-alarm' : '') + '" data-a="toggle" data-id="' + esc(k.id) + '" aria-label="Bitti olarak işaretle">' + (st === 2 ? '✓' : (alarmMi ? '!' : '')) + '</button>' +
-            '<span class="kad">' + esc(k.ad) + sub + '</span>' +
-            '<button class="pill s' + st + '" data-a="cycle" data-id="' + esc(k.id) + '">' + (alarmMi ? '🔔 Tekrar Edilmeli' : DURUMLAR[st].ad) + '</button>' +
-            (alarmMi ? '<button class="btn btn-sm btn-tekrar-hizli" data-a="tekrarok" data-id="' + esc(k.id) + '" title="Bu konuyu bugün tekrar ettim">✓ Tekrar Ettim</button>' : '') +
-            (link ? '<a class="ico play" href="' + esc(link) + '" target="_blank" rel="noopener noreferrer" title="' + esc(urlHost(link)) + '">▶</a>' : '') +
-            '<button class="ico' + (notVar || link ? ' has' : '') + '" data-a="not" data-id="' + esc(k.id) + '" title="Not ve video linki">✎</button>' +
-            (k.ozel ? '<button class="ico" data-a="delkonu" data-ders="' + d.id + '" data-id="' + esc(k.id) + '" title="Konuyu sil">✕</button>' : '') +
-            '</div>' +
-            (ui.acikNot[k.id]
-              ? '<input class="linkin" type="url" inputmode="url" data-link="' + esc(k.id) + '" value="' + esc(link || '') + '" placeholder="Video / kaynak linki (YouTube vb.)">' +
-                '<textarea class="note" data-note="' + esc(k.id) + '" placeholder="Notlarınız, video adı, dakika bilgisi...">' + esc(S.notlar[k.id] || '') + '</textarea>'
-              : '') +
+          html += '<li class="topic-row-item' + (st === 2 ? ' done' : '') + '">' +
+            '<input type="checkbox" class="chk-box-custom" data-a="toggle" data-id="' + esc(k.id) + '"' + (st === 2 ? ' checked' : '') + ' aria-label="Bitti olarak işaretle">' +
+            '<span class="topic-name-text" title="' + esc(k.ad) + '">' + esc(k.ad) + '</span>' +
+            '<button class="topic-status-pill s' + st + '" data-a="cycle" data-id="' + esc(k.id) + '">' + DURUMLAR[st].ad + '</button>' +
+            '<button class="btn-icon-44' + (notVar || link ? ' has-note' : '') + '" data-a="not" data-id="' + esc(k.id) + '" aria-label="Düzenle" title="Not ve video linki">' + IC.pen + '</button>' +
+            (k.ozel ? '<button class="btn-icon-44" data-a="delkonu" data-ders="' + d.id + '" data-id="' + esc(k.id) + '" aria-label="Konuyu sil" title="Konuyu sil">' + IC.trash + '</button>' : '') +
             '</li>';
+
+          if (ui.acikNot[k.id]) {
+            html += '<li class="topic-note-editor">' +
+              '<input class="input-dark-48 linkin" type="url" inputmode="url" data-link="' + esc(k.id) + '" value="' + esc(link || '') + '" placeholder="Video / kaynak linki (YouTube vb.)">' +
+              '<textarea class="note-textarea" data-note="' + esc(k.id) + '" placeholder="Notlarınız, video adı, dakika bilgisi...">' + esc(S.notlar[k.id] || '') + '</textarea>' +
+              '</li>';
+          }
         });
         html += '</ul>';
       }
     });
 
     if (ui.sadeceTekrar && tumKonular(d).filter(function (k) { return etkinDurum(k.id) === 3; }).length === 0) {
-      html += '<div class="ti-empty" style="margin-top:14px">🎉 Bu derste şu an tekrar bekleyen konu yok!</div>';
+      html += '<div class="ti-empty" style="margin-top:14px; text-align:center; padding:20px; color:#9aa7ba;">Bu derste şu an tekrar bekleyen konu yok.</div>';
     }
 
-    html += '<form class="add-form" data-form="konuekle" data-ders="' + d.id + '">' +
-      '<input name="ad" placeholder="Yeni konu ekle..." autocomplete="off" required>' +
-      '<button class="btn btn-primary" type="submit">Ekle</button></form>';
+    html += '<form class="add-form" data-form="konuekle" data-ders="' + d.id + '" style="margin-top:16px; display:flex; gap:8px;">' +
+      '<input name="ad" class="input-dark-48" style="margin-bottom:0;" placeholder="Yeni konu ekle..." autocomplete="off" required>' +
+      '<button class="btn-backup" style="width:auto; padding:0 20px; background:#2563eb; border-color:#2563eb; color:#fff;" type="submit">Ekle</button></form>';
     return html;
   }
 
   /* ================= Görünümler ================= */
   function halka(yuzde) {
-    var r = 52, c = 2 * Math.PI * r, off = c * (1 - yuzde / 100);
-    return '<div class="ring"><svg viewBox="0 0 120 120">' +
-      '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="#ece8e0" stroke-width="12"/>' +
-      '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="#463f9a" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/>' +
-      '</svg><div class="t">%' + yuzde + '</div></div>';
+    var r = 56, c = 2 * Math.PI * r, off = c * (1 - yuzde / 100);
+    return '<div class="ring-wrap">' +
+      '<svg width="140" height="140" viewBox="0 0 140 140">' +
+      '<circle cx="70" cy="70" r="' + r + '" fill="none" stroke="#1f2938" stroke-width="14"/>' +
+      '<circle cx="70" cy="70" r="' + r + '" fill="none" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-dasharray="' + c.toFixed(2) + '" stroke-dashoffset="' + off.toFixed(2) + '" transform="rotate(-90 70 70)"/>' +
+      '<text x="70" y="70" dy="0.36em" text-anchor="middle" font-family="\'Bricolage Grotesque\', sans-serif" font-size="30" font-weight="700" fill="#e8edf5">%' + yuzde + '</text>' +
+      '</svg></div>';
   }
 
   function viewPanel() {
@@ -3523,29 +4090,64 @@ window.DERSLER = [
     var c = sayilar(tum);
     var genel = ilerleme(tum);
 
-    var h = head('Panel') + '<div class="panel-grid"><div>';
-    h += '<div class="card overall">' + halka(genel) +
-      '<div class="overall-info"><div class="big">%' + genel + '</div><div class="muted">Genel ilerleme · ' + tum.length + ' konu</div>' +
-      '<div class="muted" style="margin-top:6px">AGS %' + ilerleme(ags) + ' · ÖABT Kimya %' + ilerleme(oabt) + '</div>' +
-      '<div class="stats">' +
-      '<span class="stat s2">Bitti ' + c[2] + '</span>' +
-      '<span class="stat s1">Çalışılıyor ' + c[1] + '</span>' +
-      '<span class="stat s3">Tekrar ' + c[3] + '</span>' +
-      '<span class="stat s0">Başlanmadı ' + c[0] + '</span></div></div></div>';
+    var h = head('Panel') + '<div class="panel-grid-v3">';
+
+    // Sol Sütun (Esnek Geniş)
+    h += '<div class="col-left">';
+
+    // a) Genel ilerleme kartı
+    h += '<div class="card-overall">' +
+      '<div class="overall-top">' +
+        halka(genel) +
+        '<div class="overall-details">' +
+          '<div class="overall-big-num">%' + genel + '</div>' +
+          '<div class="overall-sub-text">Genel ilerleme · ' + tum.length + ' konu</div>' +
+          '<div class="overall-sub-exams">AGS %' + ilerleme(ags) + ' · ÖABT Kimya %' + ilerleme(oabt) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="badge-row">' +
+        '<span class="badge-pill badge-green">Bitti ' + c[2] + '</span>' +
+        '<span class="badge-pill badge-blue">Çalışıyor ' + c[1] + '</span>' +
+        '<span class="badge-pill badge-amber">Tekrar ' + c[3] + '</span>' +
+        '<span class="badge-pill badge-neutral">Başlanmadı ' + c[0] + '</span>' +
+      '</div>' +
+    '</div>';
+
+    // b) Akıllı Hafıza & Tekrar İstasyonu kartı
     h += tekrarKarti();
 
-    h += '<div class="courses">';
+    // c) Ders kartları: 4 sütunlu ızgara, 16 px boşluk
+    h += '<div class="course-grid-4">';
     DERSLER.forEach(function (d) {
       var p = ilerleme(tumKonular(d));
-      h += '<button class="course' + (d.sinav === 'oabt' ? ' oabt' : '') + (ui.ders === d.id ? ' active' : '') + '" data-a="ders" data-id="' + d.id + '">' +
-        '<div class="ct">' + esc(d.kisa) + '<div class="cs">' + d.soru + ' soru · ' + (d.sinav === 'ags' ? 'AGS' : 'ÖABT') + '</div></div>' +
-        '<div class="pr"><div class="bar"><i style="width:' + p + '%"></i></div>%' + p + '</div></button>';
+      var isSelected = (ui.ders === d.id);
+      h += '<button class="course-card-v3' + (isSelected ? ' active' : '') + '" data-a="ders" data-id="' + d.id + '">' +
+        '<div class="course-top-info">' +
+          '<div class="course-title-text">' + esc(d.kisa) + '</div>' +
+          '<div class="course-questions-text">' + d.soru + ' soru · ' + (d.sinav === 'ags' ? 'AGS' : 'ÖABT') + '</div>' +
+        '</div>' +
+        '<div class="course-bar-wrap">' +
+          '<div class="course-progress-bar"><div class="course-progress-fill" style="width:' + p + '%"></div></div>' +
+          '<span class="course-progress-pct">%' + p + '</span>' +
+        '</div>' +
+      '</button>';
     });
-    h += '</div></div>';
+    h += '</div>'; // end course-grid-4
+    h += '</div>'; // end col-left
 
+    // Sağ Sütun (440 px Konu Paneli)
     var sd = dersBul(ui.ders);
-    h += '<div class="card side"><h2>' + esc(sd.kisa) + '</h2>' +
-      '<div class="scroll">' + konuListesi(sd) + '</div></div></div>';
+    h += '<div class="col-right-side">' +
+      '<div class="side-header-sticky">' +
+        '<h2 class="side-header-title">' + esc(sd.kisa) + '</h2>' +
+        dersKaynak(sd) +
+      '</div>' +
+      '<div class="side-topics-scroll">' +
+        konuListesi(sd) +
+      '</div>' +
+    '</div>';
+
+    h += '</div>'; // end panel-grid-v3
     return h;
   }
 

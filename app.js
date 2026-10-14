@@ -62,17 +62,22 @@
 
   /* ================= İkonlar ================= */
   var svg = function (p) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
   };
   var IC = {
-    panel: svg('<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/>'),
-    ags: svg('<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/>'),
+    panel: svg('<rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>'),
+    ags: svg('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),
     oabt: svg('<path d="M9 3h6M10 3v6L4.5 19a1.6 1.6 0 0 0 1.4 2.4h12.2a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7.5 15h9"/>'),
-    deneme: svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>'),
-    plan: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
-    sureler: svg('<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>'),
+    deneme: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
+    plan: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    sureler: svg('<circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/>'),
     settings: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
-    cal: svg('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>')
+    cal: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    flask: svg('<path d="M10 2v6.5L4.5 18A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3L14 8.5V2h-4z"/><path d="M8.5 2h7M7 16h10"/>'),
+    pen: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>'),
+    check: svg('<polyline points="20 6 9 17 4 12"/>'),
+    trash: svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+    play: svg('<polygon points="5 3 19 12 5 21 5 3"/>')
   };
 
   /* ================= Veri ================= */
@@ -221,22 +226,17 @@
     var n = tk.n || 0;
     var gunFarki = kalanGun(tk.sonraki);
     var asamaMetin = '';
-    var ikon = '🌱';
     if (n === 0) {
       asamaMetin = '1. Hafta Tekrarı';
-      ikon = '🌱';
     } else if (n === 1) {
       asamaMetin = '3. Hafta Tekrarı';
-      ikon = '🌿';
     } else {
       asamaMetin = (n + 1) + '. Tekrar (Aylık)';
-      ikon = '💎';
     }
     var vaktGeldi = (tk.sonraki <= bugun);
     return {
       n: n,
       asamaMetin: asamaMetin,
-      ikon: ikon,
       sonraki: tk.sonraki,
       gunFarki: gunFarki,
       vaktGeldi: vaktGeldi
@@ -366,60 +366,61 @@
     var toplamYapilan = (S.istatistik && S.istatistik.toplamTekrar) || 0;
     var gelecekGunler = gelecek7GunTekrarlari();
 
-    var h = '<div class="card tekrar-istasyonu">' +
-      '<div class="ti-head">' +
-        '<div class="ti-title">' +
-          '<h2>🧠 Akıllı Hafıza &amp; Tekrar İstasyonu</h2>' +
-          '<span class="muted">1. Hafta → 3. Hafta → Aylık Bilimsel Unutma Eğrisi Takibi</span>' +
+    var statusBadge = (liste.length === 0)
+      ? '<span class="badge-pill badge-green">Tüm Tekrarlar Tamam</span>'
+      : '<span class="badge-pill badge-amber">' + liste.length + ' tekrar bekliyor</span>';
+
+    var h = '<div class="card-station">' +
+      '<div class="station-header">' +
+        '<div class="station-title-box">' +
+          '<h2 class="station-title">Akıllı Hafıza &amp; Tekrar İstasyonu</h2>' +
+          '<span class="station-subtitle">1. Hafta → 3. Hafta → Aylık · Bilimsel Unutma Eğrisi Takibi</span>' +
         '</div>' +
-        '<span class="stat ' + (liste.length ? 's3' : 's2') + '">' + (liste.length ? liste.length + ' Tekrar Zamanı' : 'Tüm Tekrarlar Tamam') + '</span>' +
+        statusBadge +
       '</div>';
 
-    // 4'lü Motivasyon ve Başarı Kartları
-    h += '<div class="ti-kpis">' +
-      '<div class="ti-kpi fire"><b>🔥 ' + seri + ' Gün</b><span>Tekrar Serisi</span></div>' +
-      '<div class="ti-kpi gem"><b>💎 ' + kaliciHafiza + ' Konu</b><span>Kalıcı Hafızada (2+ Tekrar)</span></div>' +
-      '<div class="ti-kpi bell"><b>🔔 ' + liste.length + ' Konu</b><span>Bugün Tekrar Zamanı</span></div>' +
-      '<div class="ti-kpi target"><b>🎯 ' + toplamYapilan + ' Tekrar</b><span>Toplam Yapılan Tekrar</span></div>' +
+    // 4 eşit sayaç kutusu (#0b0f16, 14 px yuvarlak)
+    h += '<div class="station-kpis">' +
+      '<div class="kpi-box"><div class="kpi-num">' + seri + '</div><div class="kpi-desc">Gün tekrar serisi</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + kaliciHafiza + '</div><div class="kpi-desc">Konu kalıcı hafızada (2+ tekrar)</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + liste.length + '</div><div class="kpi-desc">Konu bugün tekrar zamanı</div></div>' +
+      '<div class="kpi-box"><div class="kpi-num">' + toplamYapilan + '</div><div class="kpi-desc">Toplam yapılan tekrar</div></div>' +
     '</div>';
 
-    // Motivasyon ve Bilimsel Unutma Notu
-    h += '<div class="ti-ipucu">' +
-      '💡 <b>Unutma Eğrisi Kuralı:</b> Biten bir konu <b>1 hafta sonra</b> %70 oranında unutulur. Tam zamanında yapacağınız 10 dakikalık 1. ve 3. hafta tekrarları, konuyu sınav gününe kadar kalıcı belleğinize mühürler.' +
+    // Unutma Eğrisi Kuralı
+    h += '<div class="forgetting-rule-box">' +
+      '<strong>Unutma Eğrisi Kuralı:</strong> Biten bir konu 1 hafta sonra %70 oranında unutulur. Tam zamanında yapacağınız 10 dakikalık 1. ve 3. hafta tekrarları, konuyu sınav gününe kadar kalıcı belleğinize mühürler.' +
     '</div>';
 
-    // Bugün Bekleyen Tekrarlar Listesi
-    if (!liste.length) {
-      h += '<div class="ti-empty">' +
-        '🎉 <b>Harika gidiyorsunuz!</b> Bugün tekrar bekleyen konu yok. Öğrendiğiniz ' + tumBitenler + ' konu hafızanızda güvende!' +
-      '</div>';
-    } else {
-      h += '<div class="ti-list">';
+    // Bugün bekleyen tekrarlar (varsa)
+    if (liste.length > 0) {
+      h += '<div class="ti-list-due">';
       liste.forEach(function (x) {
         var gecText = (x.info && x.info.gunFarki < 0) ? ' <b class="gecikme">(' + Math.abs(x.info.gunFarki) + ' gün gecikti)</b>' : '';
-        h += '<div class="ti-item">' +
-          '<div class="ti-item-info">' +
-            '<div class="ti-item-badge">' + esc(x.d.kisa) + ' · ' + (x.info ? x.info.asamaMetin : 'Tekrar') + gecText + '</div>' +
-            '<div class="ti-item-name">' + esc(x.k.ad) + '</div>' +
+        h += '<div class="ti-item-due">' +
+          '<div class="ti-item-left">' +
+            '<div class="ti-item-meta">' + esc(x.d.kisa) + ' · ' + (x.info ? x.info.asamaMetin : 'Tekrar') + gecText + '</div>' +
+            '<div class="ti-item-title">' + esc(x.k.ad) + '</div>' +
           '</div>' +
           '<div class="ti-item-actions">' +
-            '<button class="btn btn-primary btn-tekrar" data-a="tekrarok" data-id="' + esc(x.k.id) + '">✓ Tekrar Ettim</button>' +
-            '<button class="btn btn-ghost btn-sm" data-a="tekrarertele" data-id="' + esc(x.k.id) + '">Yarın Hatırlat</button>' +
+            '<button class="btn-repeat-ok" data-a="tekrarok" data-id="' + esc(x.k.id) + '">Tekrar Ettim</button>' +
+            '<button class="btn-repeat-defer" data-a="tekrarertele" data-id="' + esc(x.k.id) + '">Yarın Hatırlat</button>' +
           '</div>' +
         '</div>';
       });
       h += '</div>';
     }
 
-    // Gelecek 7 Gün Tekrar Çizelgesi
-    h += '<div class="ti-takvim-wrap">' +
-      '<div class="ti-takvim-title">📅 <b>Önümüzdeki 7 Günlük Tekrar Takvimi</b> <small class="muted">(Günü geldikçe bu listeye düşer)</small></div>' +
-      '<div class="ti-takvim">';
-    gelecekGunler.forEach(function (g) {
-      h += '<div class="ti-gun' + (g.sayi > 0 ? ' has-tekrar' : '') + '">' +
-        '<span class="g-lbl">' + g.etiket + '</span>' +
-        '<b class="g-num">' + g.sayi + '</b>' +
-        '<small class="g-dt">' + g.kisaTarih + '</small>' +
+    // 7 Günlük Tekrar Takvimi
+    h += '<div class="schedule-section">' +
+      '<div class="schedule-heading">Önümüzdeki 7 günlük tekrar takvimi · günü geldikçe bu listeye düşer</div>' +
+      '<div class="schedule-grid-7">';
+    gelecekGunler.forEach(function (g, idx) {
+      var isToday = (idx === 0);
+      h += '<div class="day-box' + (isToday ? ' is-today' : '') + '">' +
+        '<span class="day-lbl">' + g.etiket + '</span>' +
+        '<b class="day-count">' + g.sayi + '</b>' +
+        '<small class="day-date">' + g.kisaTarih + '</small>' +
       '</div>';
     });
     h += '</div></div></div>';
@@ -440,16 +441,25 @@
   function sayacChip(ad, tarih) {
     var n = kalanGun(tarih);
     var yazi;
-    if (n === null || isNaN(n)) yazi = ad + ': tarih seçin';
-    else if (n < 0) yazi = ad + ' tarihi geçti';
-    else if (n === 0) yazi = ad + ' bugün!';
-    else yazi = ad + '\'ye <b>' + n + ' gün</b>';
-    return '<button class="chip" data-a="settings" title="Tarihi değiştir: ' + esc(fmtTarih(tarih)) + '">' + IC.cal + '<span>' + yazi + '</span></button>';
+    if (n === null || isNaN(n) || !tarih) {
+      yazi = ad + ': Tarih gir';
+    } else if (n < 0) {
+      yazi = ad + ' tarihi geçti';
+    } else if (n === 0) {
+      yazi = ad + ' bugün!';
+    } else {
+      yazi = ad + '\'ye <span class="days-num">' + n + ' gün</span>';
+    }
+    return '<button class="chip-countdown" data-a="settings" aria-label="' + esc(ad) + ' sınav tarihi ayarları">' +
+      IC.cal + '<span>' + yazi + '</span></button>';
   }
 
   function head(baslik) {
     return '<div class="head"><h1>' + esc(baslik) + '</h1>' +
-      sayacChip('AGS', S.tarih.ags) + sayacChip('ÖABT', S.tarih.oabt) + '</div>';
+      '<div class="head-badges">' +
+      sayacChip('AGS', S.tarih.ags) +
+      sayacChip('ÖABT', S.tarih.oabt) +
+      '</div></div>';
   }
 
   /* ================= Konu listesi bileşeni ================= */
@@ -460,23 +470,22 @@
       if (etkinDurum(k.id) === 3) tekrarSayisi++;
     });
 
-    return '<div class="kaynak-bar">' +
-      '<div class="kaynak">' +
-        (u ? '<a class="klink" href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">▶ Ders kaynağı: ' + esc(urlHost(u)) + '</a>'
-           : '<span class="muted">Ders kaynağı (YouTube listesi vb.) eklenmemiş</span>') +
-        '<button class="ico" data-a="derslink" data-id="' + d.id + '" title="Ders kaynağı linkini düzenle">✎</button>' +
+    var kaynakHtml = u
+      ? '<a class="side-resource-link" href="' + esc(urlDuzelt(u)) + '" target="_blank" rel="noopener noreferrer">Ders kaynağı: ' + esc(urlHost(u)) + '</a>'
+      : '<span class="side-resource-empty">Ders kaynağı (YouTube listesi vb.) eklenmemiş</span>';
+
+    return '<div class="side-resource-row">' +
+        kaynakHtml +
+        '<button class="btn-icon-44" data-a="derslink" data-id="' + d.id + '" aria-label="Ders kaynağını düzenle" title="Ders kaynağı linkini düzenle">' + IC.pen + '</button>' +
       '</div>' +
-      '<div class="filtre-wrap">' +
-        '<button class="btn btn-sm btn-filter' + (ui.sadeceTekrar ? ' active' : '') + '" data-a="tekrarfiltre">' +
-          (ui.sadeceTekrar ? 'Tüm Konuları Göster' : '🔔 Sadece Tekrar Bekleyenler' + (tekrarSayisi ? ' (' + tekrarSayisi + ')' : '')) +
-        '</button>' +
-      '</div>' +
-    '</div>';
+      '<button class="btn-filter-repeat' + (ui.sadeceTekrar ? ' active' : '') + '" data-a="tekrarfiltre">' +
+        (ui.sadeceTekrar ? 'Tüm Konuları Göster' : 'Sadece tekrar bekleyenler' + (tekrarSayisi ? ' (' + tekrarSayisi + ')' : '')) +
+      '</button>';
   }
 
   function konuListesi(d, opts) {
     opts = opts || {};
-    var html = dersKaynak(d);
+    var html = '';
     gruplar(d).forEach(function (g) {
       var filtrelenmis = g.konular.filter(function (k) {
         if (!ui.sadeceTekrar) return true;
@@ -485,61 +494,55 @@
 
       if (filtrelenmis.length > 0 || !ui.sadeceTekrar) {
         if (g.ad) {
-          html += '<div class="group-title"><span>' + esc(g.ad) + '</span><span class="gp">%' + ilerleme(g.konular) + '</span></div>';
+          html += '<div class="topic-group-header">' +
+            '<span class="topic-group-title">' + esc(g.ad) + '</span>' +
+            '<span class="topic-group-pct">%' + ilerleme(g.konular) + '</span>' +
+          '</div>';
         }
-        html += '<ul class="konular">';
+        html += '<ul class="topic-list-ul">';
         filtrelenmis.forEach(function (k) {
           var st = etkinDurum(k.id);
           var notVar = !!S.notlar[k.id];
           var link = S.linkler[k.id];
-          var info = asamaBilgisi(k.id);
-          var sub = '';
-          var alarmMi = (st === 3);
 
-          if (alarmMi) {
-            var gecStr = (info && info.gunFarki < 0) ? ' (' + Math.abs(info.gunFarki) + ' gün gecikti)' : ' (Günü Geldi!)';
-            sub = '<span class="sub alarm">⚠️ ' + (info ? info.asamaMetin : 'Tekrar') + ' zamanı!' + gecStr + '</span>';
-          } else if (st === 2 && info) {
-            sub = '<span class="sub">' + info.ikon + ' ' + info.asamaMetin + ' · ' + info.gunFarki + ' gün kaldı (' + fmtKisa(info.sonraki) + ')</span>';
-          }
-
-          html += '<li class="konu' + (st === 2 ? ' done' : '') + (alarmMi ? ' tekrar-alarm' : '') + '">' +
-            '<div class="r">' +
-            '<button class="chk' + (st === 2 ? ' on' : '') + (alarmMi ? ' chk-alarm' : '') + '" data-a="toggle" data-id="' + esc(k.id) + '" aria-label="Bitti olarak işaretle">' + (st === 2 ? '✓' : (alarmMi ? '!' : '')) + '</button>' +
-            '<span class="kad">' + esc(k.ad) + sub + '</span>' +
-            '<button class="pill s' + st + '" data-a="cycle" data-id="' + esc(k.id) + '">' + (alarmMi ? '🔔 Tekrar Edilmeli' : DURUMLAR[st].ad) + '</button>' +
-            (alarmMi ? '<button class="btn btn-sm btn-tekrar-hizli" data-a="tekrarok" data-id="' + esc(k.id) + '" title="Bu konuyu bugün tekrar ettim">✓ Tekrar Ettim</button>' : '') +
-            (link ? '<a class="ico play" href="' + esc(link) + '" target="_blank" rel="noopener noreferrer" title="' + esc(urlHost(link)) + '">▶</a>' : '') +
-            '<button class="ico' + (notVar || link ? ' has' : '') + '" data-a="not" data-id="' + esc(k.id) + '" title="Not ve video linki">✎</button>' +
-            (k.ozel ? '<button class="ico" data-a="delkonu" data-ders="' + d.id + '" data-id="' + esc(k.id) + '" title="Konuyu sil">✕</button>' : '') +
-            '</div>' +
-            (ui.acikNot[k.id]
-              ? '<input class="linkin" type="url" inputmode="url" data-link="' + esc(k.id) + '" value="' + esc(link || '') + '" placeholder="Video / kaynak linki (YouTube vb.)">' +
-                '<textarea class="note" data-note="' + esc(k.id) + '" placeholder="Notlarınız, video adı, dakika bilgisi...">' + esc(S.notlar[k.id] || '') + '</textarea>'
-              : '') +
+          html += '<li class="topic-row-item' + (st === 2 ? ' done' : '') + '">' +
+            '<input type="checkbox" class="chk-box-custom" data-a="toggle" data-id="' + esc(k.id) + '"' + (st === 2 ? ' checked' : '') + ' aria-label="Bitti olarak işaretle">' +
+            '<span class="topic-name-text" title="' + esc(k.ad) + '">' + esc(k.ad) + '</span>' +
+            '<button class="topic-status-pill s' + st + '" data-a="cycle" data-id="' + esc(k.id) + '">' + DURUMLAR[st].ad + '</button>' +
+            '<button class="btn-icon-44' + (notVar || link ? ' has-note' : '') + '" data-a="not" data-id="' + esc(k.id) + '" aria-label="Düzenle" title="Not ve video linki">' + IC.pen + '</button>' +
+            (k.ozel ? '<button class="btn-icon-44" data-a="delkonu" data-ders="' + d.id + '" data-id="' + esc(k.id) + '" aria-label="Konuyu sil" title="Konuyu sil">' + IC.trash + '</button>' : '') +
             '</li>';
+
+          if (ui.acikNot[k.id]) {
+            html += '<li class="topic-note-editor">' +
+              '<input class="input-dark-48 linkin" type="url" inputmode="url" data-link="' + esc(k.id) + '" value="' + esc(link || '') + '" placeholder="Video / kaynak linki (YouTube vb.)">' +
+              '<textarea class="note-textarea" data-note="' + esc(k.id) + '" placeholder="Notlarınız, video adı, dakika bilgisi...">' + esc(S.notlar[k.id] || '') + '</textarea>' +
+              '</li>';
+          }
         });
         html += '</ul>';
       }
     });
 
     if (ui.sadeceTekrar && tumKonular(d).filter(function (k) { return etkinDurum(k.id) === 3; }).length === 0) {
-      html += '<div class="ti-empty" style="margin-top:14px">🎉 Bu derste şu an tekrar bekleyen konu yok!</div>';
+      html += '<div class="ti-empty" style="margin-top:14px; text-align:center; padding:20px; color:#9aa7ba;">Bu derste şu an tekrar bekleyen konu yok.</div>';
     }
 
-    html += '<form class="add-form" data-form="konuekle" data-ders="' + d.id + '">' +
-      '<input name="ad" placeholder="Yeni konu ekle..." autocomplete="off" required>' +
-      '<button class="btn btn-primary" type="submit">Ekle</button></form>';
+    html += '<form class="add-form" data-form="konuekle" data-ders="' + d.id + '" style="margin-top:16px; display:flex; gap:8px;">' +
+      '<input name="ad" class="input-dark-48" style="margin-bottom:0;" placeholder="Yeni konu ekle..." autocomplete="off" required>' +
+      '<button class="btn-backup" style="width:auto; padding:0 20px; background:#2563eb; border-color:#2563eb; color:#fff;" type="submit">Ekle</button></form>';
     return html;
   }
 
   /* ================= Görünümler ================= */
   function halka(yuzde) {
-    var r = 52, c = 2 * Math.PI * r, off = c * (1 - yuzde / 100);
-    return '<div class="ring"><svg viewBox="0 0 120 120">' +
-      '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="#ece8e0" stroke-width="12"/>' +
-      '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="#463f9a" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/>' +
-      '</svg><div class="t">%' + yuzde + '</div></div>';
+    var r = 56, c = 2 * Math.PI * r, off = c * (1 - yuzde / 100);
+    return '<div class="ring-wrap">' +
+      '<svg width="140" height="140" viewBox="0 0 140 140">' +
+      '<circle cx="70" cy="70" r="' + r + '" fill="none" stroke="#1f2938" stroke-width="14"/>' +
+      '<circle cx="70" cy="70" r="' + r + '" fill="none" stroke="#2563eb" stroke-width="14" stroke-linecap="round" stroke-dasharray="' + c.toFixed(2) + '" stroke-dashoffset="' + off.toFixed(2) + '" transform="rotate(-90 70 70)"/>' +
+      '<text x="70" y="70" dy="0.36em" text-anchor="middle" font-family="\'Bricolage Grotesque\', sans-serif" font-size="30" font-weight="700" fill="#e8edf5">%' + yuzde + '</text>' +
+      '</svg></div>';
   }
 
   function viewPanel() {
@@ -552,29 +555,64 @@
     var c = sayilar(tum);
     var genel = ilerleme(tum);
 
-    var h = head('Panel') + '<div class="panel-grid"><div>';
-    h += '<div class="card overall">' + halka(genel) +
-      '<div class="overall-info"><div class="big">%' + genel + '</div><div class="muted">Genel ilerleme · ' + tum.length + ' konu</div>' +
-      '<div class="muted" style="margin-top:6px">AGS %' + ilerleme(ags) + ' · ÖABT Kimya %' + ilerleme(oabt) + '</div>' +
-      '<div class="stats">' +
-      '<span class="stat s2">Bitti ' + c[2] + '</span>' +
-      '<span class="stat s1">Çalışılıyor ' + c[1] + '</span>' +
-      '<span class="stat s3">Tekrar ' + c[3] + '</span>' +
-      '<span class="stat s0">Başlanmadı ' + c[0] + '</span></div></div></div>';
+    var h = head('Panel') + '<div class="panel-grid-v3">';
+
+    // Sol Sütun (Esnek Geniş)
+    h += '<div class="col-left">';
+
+    // a) Genel ilerleme kartı
+    h += '<div class="card-overall">' +
+      '<div class="overall-top">' +
+        halka(genel) +
+        '<div class="overall-details">' +
+          '<div class="overall-big-num">%' + genel + '</div>' +
+          '<div class="overall-sub-text">Genel ilerleme · ' + tum.length + ' konu</div>' +
+          '<div class="overall-sub-exams">AGS %' + ilerleme(ags) + ' · ÖABT Kimya %' + ilerleme(oabt) + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="badge-row">' +
+        '<span class="badge-pill badge-green">Bitti ' + c[2] + '</span>' +
+        '<span class="badge-pill badge-blue">Çalışıyor ' + c[1] + '</span>' +
+        '<span class="badge-pill badge-amber">Tekrar ' + c[3] + '</span>' +
+        '<span class="badge-pill badge-neutral">Başlanmadı ' + c[0] + '</span>' +
+      '</div>' +
+    '</div>';
+
+    // b) Akıllı Hafıza & Tekrar İstasyonu kartı
     h += tekrarKarti();
 
-    h += '<div class="courses">';
+    // c) Ders kartları: 4 sütunlu ızgara, 16 px boşluk
+    h += '<div class="course-grid-4">';
     DERSLER.forEach(function (d) {
       var p = ilerleme(tumKonular(d));
-      h += '<button class="course' + (d.sinav === 'oabt' ? ' oabt' : '') + (ui.ders === d.id ? ' active' : '') + '" data-a="ders" data-id="' + d.id + '">' +
-        '<div class="ct">' + esc(d.kisa) + '<div class="cs">' + d.soru + ' soru · ' + (d.sinav === 'ags' ? 'AGS' : 'ÖABT') + '</div></div>' +
-        '<div class="pr"><div class="bar"><i style="width:' + p + '%"></i></div>%' + p + '</div></button>';
+      var isSelected = (ui.ders === d.id);
+      h += '<button class="course-card-v3' + (isSelected ? ' active' : '') + '" data-a="ders" data-id="' + d.id + '">' +
+        '<div class="course-top-info">' +
+          '<div class="course-title-text">' + esc(d.kisa) + '</div>' +
+          '<div class="course-questions-text">' + d.soru + ' soru · ' + (d.sinav === 'ags' ? 'AGS' : 'ÖABT') + '</div>' +
+        '</div>' +
+        '<div class="course-bar-wrap">' +
+          '<div class="course-progress-bar"><div class="course-progress-fill" style="width:' + p + '%"></div></div>' +
+          '<span class="course-progress-pct">%' + p + '</span>' +
+        '</div>' +
+      '</button>';
     });
-    h += '</div></div>';
+    h += '</div>'; // end course-grid-4
+    h += '</div>'; // end col-left
 
+    // Sağ Sütun (440 px Konu Paneli)
     var sd = dersBul(ui.ders);
-    h += '<div class="card side"><h2>' + esc(sd.kisa) + '</h2>' +
-      '<div class="scroll">' + konuListesi(sd) + '</div></div></div>';
+    h += '<div class="col-right-side">' +
+      '<div class="side-header-sticky">' +
+        '<h2 class="side-header-title">' + esc(sd.kisa) + '</h2>' +
+        dersKaynak(sd) +
+      '</div>' +
+      '<div class="side-topics-scroll">' +
+        konuListesi(sd) +
+      '</div>' +
+    '</div>';
+
+    h += '</div>'; // end panel-grid-v3
     return h;
   }
 

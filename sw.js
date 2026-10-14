@@ -1,7 +1,8 @@
-const CACHE_NAME = 'ags-takip-v2';
+const CACHE_NAME = 'ags-takip-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './ags-takip-tek-dosya.html',
   './style.css',
   './konular.js',
   './app.js',
