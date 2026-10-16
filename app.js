@@ -122,7 +122,10 @@
         if (!d.istatistik) d.istatistik = { seri: 0, sonTarih: '', toplamTekrar: 0 };
         if (!d.planAyarlar) d.planAyarlar = varsayilan().planAyarlar;
       }
-    } catch (e) { /* bozuk veri: varsayılana dön */ }
+    } catch (e) {
+      /* bozuk veri: ezmeden önce ham kaydı yedekle, sonra varsayılana dön */
+      try { localStorage.setItem(STORE + '-bozuk-yedek', localStorage.getItem(STORE)); } catch (e2) {}
+    }
     return d;
   }
 
@@ -183,16 +186,16 @@
     return out;
   }
 
+  // Konunun gerçek durumu. 'Bitti' işareti, kullanıcı kendisi değiştirmedikçe değişmez.
   function etkinDurum(id) {
-    var st = S.durum[id] || 0;
+    return S.durum[id] || 0;
+  }
+
+  // Tekrar vakti geldi mi? (durumdan bağımsız: Bitti konu bitti kalır, yanında uyarı çıkar)
+  function tekrarVakti(id) {
     var tk = S.tekrar[id];
-    var bugun = bugunStr();
-    // Bitti olarak işaretlenen bir konunun tekrar günü geldiyse veya geçtiyse:
-    // Otomatik olarak 'Tekrar Edilmeli' (3) durumuna düşer!
-    if (st === 2 && tk && tk.sonraki && tk.sonraki <= bugun) {
-      return 3;
-    }
-    return st;
+    var st = S.durum[id] || 0;
+    return !!(tk && tk.sonraki && tk.sonraki <= bugunStr() && (st === 2 || st === 3));
   }
 
   function puan(id) {
@@ -308,9 +311,8 @@
     var bugun = bugunStr(), out = [];
     DERSLER.forEach(function (d) {
       tumKonular(d).forEach(function (k) {
-        var st = etkinDurum(k.id);
         var tk = S.tekrar[k.id];
-        if (st === 3 && tk) {
+        if (tk && tekrarVakti(k.id)) {
           out.push({ k: k, d: d, tk: tk, info: asamaBilgisi(k.id) });
         }
       });
@@ -331,7 +333,8 @@
       DERSLER.forEach(function (ders) {
         tumKonular(ders).forEach(function (k) {
           var tk = S.tekrar[k.id];
-          if (tk && tk.sonraki === tStr && (S.durum[k.id] === 2 || S.durum[k.id] === 3)) {
+          var st0 = S.durum[k.id];
+          if (tk && (st0 === 2 || st0 === 3) && (i === 0 ? tk.sonraki <= tStr : tk.sonraki === tStr)) {
             sayi++;
           }
         });
@@ -467,7 +470,7 @@
     var u = S.dersLink[d.id];
     var tekrarSayisi = 0;
     tumKonular(d).forEach(function (k) {
-      if (etkinDurum(k.id) === 3) tekrarSayisi++;
+      if (tekrarVakti(k.id)) tekrarSayisi++;
     });
 
     var kaynakHtml = u
@@ -489,7 +492,7 @@
     gruplar(d).forEach(function (g) {
       var filtrelenmis = g.konular.filter(function (k) {
         if (!ui.sadeceTekrar) return true;
-        return etkinDurum(k.id) === 3;
+        return tekrarVakti(k.id);
       });
 
       if (filtrelenmis.length > 0 || !ui.sadeceTekrar) {
@@ -503,11 +506,13 @@
         filtrelenmis.forEach(function (k) {
           var st = etkinDurum(k.id);
           var notVar = !!S.notlar[k.id];
+          var vakit = tekrarVakti(k.id);
           var link = S.linkler[k.id];
 
           html += '<li class="topic-row-item' + (st === 2 ? ' done' : '') + '">' +
             '<input type="checkbox" class="chk-box-custom" data-a="toggle" data-id="' + esc(k.id) + '"' + (st === 2 ? ' checked' : '') + ' aria-label="Bitti olarak işaretle">' +
             '<span class="topic-name-text" title="' + esc(k.ad) + '">' + esc(k.ad) + '</span>' +
+            (vakit ? '<span class="tekrar-tag">Tekrar zamanı</span>' : '') +
             '<button class="topic-status-pill s' + st + '" data-a="cycle" data-id="' + esc(k.id) + '">' + DURUMLAR[st].ad + '</button>' +
             '<button class="btn-icon-44' + (notVar || link ? ' has-note' : '') + '" data-a="not" data-id="' + esc(k.id) + '" aria-label="Düzenle" title="Not ve video linki">' + IC.pen + '</button>' +
             (k.ozel ? '<button class="btn-icon-44" data-a="delkonu" data-ders="' + d.id + '" data-id="' + esc(k.id) + '" aria-label="Konuyu sil" title="Konuyu sil">' + IC.trash + '</button>' : '') +
@@ -524,7 +529,7 @@
       }
     });
 
-    if (ui.sadeceTekrar && tumKonular(d).filter(function (k) { return etkinDurum(k.id) === 3; }).length === 0) {
+    if (ui.sadeceTekrar && tumKonular(d).filter(function (k) { return tekrarVakti(k.id); }).length === 0) {
       html += '<div class="ti-empty" style="margin-top:14px; text-align:center; padding:20px; color:#9aa7ba;">Bu derste şu an tekrar bekleyen konu yok.</div>';
     }
 
@@ -573,7 +578,7 @@
       '<div class="badge-row">' +
         '<span class="badge-pill badge-green">Bitti ' + c[2] + '</span>' +
         '<span class="badge-pill badge-blue">Çalışıyor ' + c[1] + '</span>' +
-        '<span class="badge-pill badge-amber">Tekrar ' + c[3] + '</span>' +
+        '<span class="badge-pill badge-amber">Tekrar zamanı ' + bugunTekrarlar().length + '</span>' +
         '<span class="badge-pill badge-neutral">Başlanmadı ' + c[0] + '</span>' +
       '</div>' +
     '</div>';
@@ -1743,11 +1748,11 @@
 
   // Sol paneldeki kaydırma konumunu koruyarak çiz (tıklayınca liste başa sarmasın)
   function renderKorumali() {
-    var sc = document.querySelector('.side .scroll');
+    var sc = document.querySelector('.side-topics-scroll');
     var top = sc ? sc.scrollTop : 0;
     var win = window.scrollY;
     render();
-    sc = document.querySelector('.side .scroll');
+    sc = document.querySelector('.side-topics-scroll');
     if (sc) sc.scrollTop = top;
     window.scrollTo(0, win);
   }
@@ -1777,7 +1782,17 @@
     denemetur: function (el) { ui.denemeTur = el.dataset.id; render(); },
     toggle: function (el) {
       var id = el.dataset.id;
-      durumAyarla(id, (S.durum[id] || 0) === 2 ? 0 : 2);
+      var st = S.durum[id] || 0;
+      if (st === 3) { tekrarYap(id); return; }
+      if (st === 2) {
+        var tk = S.tekrar[id];
+        if (tk && tk.n > 0 && !confirm('Bu konunun tekrar geçmişi silinecek. "Bitti" işareti kaldırılsın mı?')) {
+          renderKorumali(); return;
+        }
+        durumAyarla(id, 0);
+      } else {
+        durumAyarla(id, 2);
+      }
       kaydet(); renderKorumali();
     },
     cycle: function (el) {
@@ -1808,7 +1823,7 @@
     plantoggle: function (el) {
       var t = S.plan[el.dataset.g][el.dataset.j];
       t.done = !t.done;
-      if (t.done && t.konuId) {
+      if (t.done && t.konuId && (S.durum[t.konuId] || 0) < 2) {
         durumAyarla(t.konuId, 2);
         toast('✓ Görev tamamlandı! Konu "Bitti" durumuna alındı ve 1. hafta tekrarı kuruldu 🌱');
       }
@@ -2197,8 +2212,8 @@
   document.addEventListener('focusout', function (e) {
     if (e.target.dataset && e.target.dataset.note) {
       var id = e.target.dataset.note;
-      var btn = document.querySelector('.ico[data-a="not"][data-id="' + id.replace(/"/g, '\\"') + '"]');
-      if (btn) btn.classList.toggle('has', !!S.notlar[id] || !!S.linkler[id]);
+      var btn = document.querySelector('[data-a="not"][data-id="' + id.replace(/"/g, '\\"') + '"]');
+      if (btn) btn.classList.toggle('has-note', !!S.notlar[id] || !!S.linkler[id]);
     }
   });
 
@@ -2211,8 +2226,8 @@
     if (ham && !u) { toast('Geçerli bir http/https adresi girin.'); return; }
     if (u) { S.linkler[id] = u; e.target.value = u; } else { delete S.linkler[id]; }
     kaydet();
-    var btn = document.querySelector('.ico[data-a="not"][data-id="' + id.replace(/"/g, '\\"') + '"]');
-    if (btn) btn.classList.toggle('has', !!S.notlar[id] || !!S.linkler[id]);
+    var btn = document.querySelector('[data-a="not"][data-id="' + id.replace(/"/g, '\\"') + '"]');
+    if (btn) btn.classList.toggle('has-note', !!S.notlar[id] || !!S.linkler[id]);
   });
 
   $('#d-ags').addEventListener('change', function (e) { S.tarih.ags = e.target.value; S.tarih.onayli = true; kaydet(); render(); });

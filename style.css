@@ -2964,3 +2964,19 @@ dialog#settings::backdrop {
   .app { display: block; }
   body { background: #fff; color: #000; }
 }
+
+/* Biten konunun tekrar vakti geldiğinde yanında çıkan uyarı (konu bitti kalır) */
+.tekrar-tag {
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--amber);
+  background: rgba(242, 184, 75, 0.12);
+  border: 1px solid rgba(242, 184, 75, 0.3);
+}
