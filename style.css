@@ -505,6 +505,77 @@ main, #main {
   gap: 20px;
 }
 
+.card-station.due-active {
+  border-color: rgba(242, 184, 75, 0.45);
+}
+
+.card-station.clean-status {
+  padding: 16px 24px;
+  gap: 0;
+}
+
+.station-clean-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.station-clean-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.station-check-ico {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.station-check-ico svg {
+  stroke: var(--green);
+}
+
+.clean-title {
+  display: block;
+  font-size: 16px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.clean-sub {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-sec);
+}
+
+.btn-toggle-7day {
+  height: 40px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  color: var(--blue-light);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-toggle-7day:hover {
+  background: #172236;
+  border-color: var(--blue);
+}
+
 .station-header {
   display: flex;
   align-items: flex-start;
