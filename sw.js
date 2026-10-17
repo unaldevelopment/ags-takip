@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ags-takip-v6';
+const CACHE_NAME = 'ags-takip-v9';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

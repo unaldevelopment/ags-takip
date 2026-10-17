@@ -70,6 +70,7 @@
     oabt: svg('<path d="M9 3h6M10 3v6L4.5 19a1.6 1.6 0 0 0 1.4 2.4h12.2a1.6 1.6 0 0 0 1.4-2.4L14 9V3"/><path d="M7.5 15h9"/>'),
     deneme: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
     plan: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    gecmis: svg('<circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/>'),
     sureler: svg('<circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/>'),
     settings: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'),
     cal: svg('<rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
@@ -95,6 +96,7 @@
       linkler: {},    // konuId -> video/kaynak adresi
       dersLink: {},   // dersId -> oynatma listesi / kanal adresi
       tekrar: {},     // konuId -> { n: kaçıncı tekrar, sonraki: 'YYYY-MM-DD', sonTekrar: 'YYYY-MM-DD' }
+      bitis: {},      // konuId -> { t: bitiş tarihi 'YYYY-MM-DD', dk: o gün için sayılan süre (dakika) }
       istatistik: { seri: 0, sonTarih: '', toplamTekrar: 0 },
       denemeler: [],  // {id, tur, ad, tarih, d, y, b, net}
       plan: plan,     // gün indeksi -> [{t, done}]
@@ -105,9 +107,14 @@
       planAyarlar: {  // akıllı planlayıcı tercihleri
         v2: true,
         hiz: 1.5,
-        aktifGunler: [true, true, true, true, true, false, false], // Pzt-Cuma kütüphane
+        aktifGunler: [true, true, true, true, true, false, false], // (eski alan) Pzt-Cuma kütüphane
+        gunSablon: ['tam', 'tam', 'tam', 'tam', 'tam', 'yok', 'yok'], // gün başına: yok | tam | sabah | ogle
         aksamGunler: [true, true, true, true, false, false, false], // 21:00-22:30 akşam etüdü (Pzt-Per)
-        seciliDersler: ['eb', 'ok']
+        seciliDersler: ['eb', 'ok'],
+        duzen: 'donusumlu',   // sirali | donusumlu | agirlikli
+        maks: 0,              // günlük en fazla konu (0 = sınırsız)
+        sureMod: 'gercek',    // gercek (video süresi) | sabit (45 dk ÷ hız)
+        atla: {}              // konuId -> true: plana alınmayacak konular
       }
     };
   }
@@ -120,6 +127,7 @@
         Object.keys(d).forEach(function (k) { if (r[k] !== undefined) d[k] = r[k]; });
         for (var i = 0; i < 7; i++) if (!Array.isArray(d.plan[i])) d.plan[i] = [];
         if (!d.istatistik) d.istatistik = { seri: 0, sonTarih: '', toplamTekrar: 0 };
+        if (!d.bitis || typeof d.bitis !== 'object') d.bitis = {};
         if (!d.planAyarlar) d.planAyarlar = varsayilan().planAyarlar;
       }
     } catch (e) {
@@ -138,7 +146,7 @@
     acikNot: {},
     sadeceTekrar: false,
     takvimAcik: false,
-    sureHiz: S.hiz || 2.0,
+    sureHiz: (S.planAyarlar && S.planAyarlar.hiz) || S.hiz || 2.0,   // tek hız ayarı: planAyarlar.hiz
     sureHedef: S.hedef || 2.0,
     sureKat: 'eb',
     planWizardAcik: false,
@@ -250,6 +258,15 @@
   function durumAyarla(id, v) {
     if (v) S.durum[id] = v; else delete S.durum[id];
     var bugun = bugunStr();
+    if (!S.bitis) S.bitis = {};
+    if (v === 2) {
+      if (!S.bitis[id]) {
+        var kbi = konuBul(id);
+        S.bitis[id] = { t: bugun, dk: konuSuresi((S.planAyarlar && S.planAyarlar.hiz) || 1.5, kbi ? kbi.d.id : null) };
+      }
+    } else if (v !== 3) {
+      delete S.bitis[id];
+    }
     if (v === 2) {
       // Bitti yapıldığında: İlk tekrar tam 1 hafta (7 gün) sonraya kurulur!
       if (!S.tekrar[id]) {
@@ -898,6 +915,20 @@
   var GUN_KISA = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
   var AY_ADLARI = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
   var HIZLAR = [1, 1.25, 1.5, 1.75, 2];
+  // Gün şablonları: o gün hangi oturumlar planlanır
+  var SABLONLAR = {
+    yok:   { ad: 'Dinlenme', oturum: [] },
+    tam:   { ad: 'Tam gün', oturum: ['s1', 's2', 's3', 's4', 's5', 'tk'] },
+    sabah: { ad: 'Sabah', oturum: ['s1', 's2', 's3'] },
+    ogle:  { ad: 'Öğleden sonra', oturum: ['s4', 's5', 'tk'] }
+  };
+  var SABLON_SIRA = ['yok', 'tam', 'sabah', 'ogle'];
+  var MAKS_SECENEK = [0, 2, 3, 4, 6, 8];
+  var DUZENLER = [
+    { id: 'donusumlu', ad: 'Dönüşümlü', not: 'Her gün farklı dersten konu gelir; aynı dersi arka arkaya çalışmazsın.' },
+    { id: 'agirlikli', ad: 'Ağırlıklı', not: 'Dönüşümlü, ama sınavda çok soru çıkan dersler daha sık gelir.' },
+    { id: 'sirali', ad: 'Sırayla', not: 'Önce bir dersi bitirirsin, sonra diğerine geçersin.' }
+  ];
 
   function dkOku(s) { var p = String(s).split(':'); return (+p[0]) * 60 + (+p[1]); }
   function saatYaz(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
@@ -905,7 +936,38 @@
   function bugunIdx() { return (new Date().getDay() + 6) % 7; }
   function haftaBasi() { return gunEkle(bugunStr(), -bugunIdx()); }
   function tarihEtiket(str) { var p = str.split('-'); return (+p[2]) + ' ' + AY_ADLARI[+p[1] - 1]; }
-  function konuSuresi(hiz) { return Math.max(10, Math.round(45 / hiz)); }
+  function sablonBitis(ad) {
+    var m = 0;
+    (SABLONLAR[ad] || SABLONLAR.yok).oturum.forEach(function (id) {
+      OTURUMLAR.forEach(function (o) { if (o.id === id) m = Math.max(m, dkOku(o.bit)); });
+    });
+    return m;
+  }
+  function sureModu() { return (S.planAyarlar && S.planAyarlar.sureMod) === 'sabit' ? 'sabit' : 'gercek'; }
+  // Dersin 1x hızdaki konu başına video süresi (dk). Süre Analizi verisi yoksa 45.
+  function dersKonuDk1x(dersId) {
+    var kaynak = {
+      eb: { kat: 'eb' }, ok: { kat: 'oabt' },
+      sz: { kat: 'gygk', id: 'gygk_turkce' }, sy: { kat: 'gygk', id: 'gygk_mat' },
+      mv: { kat: 'gygk', id: 'gygk_vatandaslik' }, ta: { kat: 'gygk', id: 'gygk_tarih' }, cg: { kat: 'gygk', id: 'gygk_cografya' }
+    }[dersId];
+    if (!kaynak || typeof VIDEO_ANALIZ === 'undefined') return 45;
+    var saat = 0;
+    (VIDEO_ANALIZ[kaynak.kat] || []).forEach(function (x) { if (!kaynak.id || x.id === kaynak.id) saat += x.saat1x; });
+    var n = tumKonular(dersBul(dersId)).length;
+    return (saat > 0 && n > 0) ? saat * 60 / n : 45;
+  }
+  // Bir konunun planlanan süresi (dk, 5'e yuvarlı). mod: 'gercek' (dersin video süresi) | 'sabit' (45 dk ÷ hız)
+  function konuSuresi(hiz, dersId, mod) {
+    var dk1x = ((mod || sureModu()) === 'sabit' || !dersId) ? 45 : dersKonuDk1x(dersId);
+    return Math.max(10, Math.round(dk1x / hiz / 5) * 5);
+  }
+  function planDisi(id) { return !!(S.planAyarlar && S.planAyarlar.atla && S.planAyarlar.atla[id]); }
+  function atlaMap() {
+    if (!S.planAyarlar) S.planAyarlar = {};
+    if (!S.planAyarlar.atla) S.planAyarlar.atla = {};
+    return S.planAyarlar.atla;
+  }
   function hizYaz(h) { return String(h).replace('.', ',') + 'x'; }
 
   // Eski/yarım kayıtları yeni yapıya uyarlar, hafta değiştiyse planı sıfırlar. Değişiklik olduysa true döner.
@@ -962,33 +1024,59 @@
     return !!t.done;
   }
 
-  function planHavuz(dersIds, haric) {
-    var q = { ags: [], oabt: [] };
+  // Seçili derslerin henüz bitmeyen ve plan dışı bırakılmayan konularını düzene göre sıralar.
+  // Dönen { ags: [...], oabt: [...] }: her öğe { id, konuAd, dersAd, dersId, dk }
+  function havuzSirala(kuyruklar, duzen) {
+    var out = [], i;
+    if (duzen === 'sirali' || kuyruklar.length < 2) {
+      kuyruklar.forEach(function (k) { out = out.concat(k.items); });
+      return out;
+    }
+    var idx = kuyruklar.map(function () { return 0; });
+    if (duzen === 'agirlikli') {
+      var cur = kuyruklar.map(function () { return 0; });
+      for (;;) {
+        var acik = [], toplamW = 0;
+        for (i = 0; i < kuyruklar.length; i++) if (idx[i] < kuyruklar[i].items.length) { acik.push(i); toplamW += kuyruklar[i].w; }
+        if (!acik.length) break;
+        var en = acik[0];
+        acik.forEach(function (a) { cur[a] += kuyruklar[a].w; if (cur[a] > cur[en]) en = a; });
+        cur[en] -= toplamW;
+        out.push(kuyruklar[en].items[idx[en]++]);
+      }
+      return out;
+    }
+    var kaldi = true;
+    while (kaldi) {
+      kaldi = false;
+      for (i = 0; i < kuyruklar.length; i++) {
+        if (idx[i] < kuyruklar[i].items.length) { out.push(kuyruklar[i].items[idx[i]++]); kaldi = true; }
+      }
+    }
+    return out;
+  }
+
+  function planHavuz(dersIds, haric, duzen, hiz, sureMod) {
+    var kuy = { ags: [], oabt: [] };
     DERSLER.forEach(function (d) {
       if (dersIds.indexOf(d.id) === -1) return;
+      var items = [];
       tumKonular(d).forEach(function (k) {
-        if (etkinDurum(k.id) >= 2 || haric[k.id]) return;
-        q[d.sinav === 'ags' ? 'ags' : 'oabt'].push({ id: k.id, konuAd: k.ad, dersAd: d.kisa });
+        if (etkinDurum(k.id) >= 2 || (haric && haric[k.id]) || planDisi(k.id)) return;
+        items.push({ id: k.id, konuAd: k.ad, dersAd: d.kisa, dersId: d.id, dk: konuSuresi(hiz || 1.5, d.id, sureMod) });
       });
+      if (items.length) kuy[d.sinav === 'ags' ? 'ags' : 'oabt'].push({ w: d.soru || 1, items: items });
     });
-    return q;
+    return { ags: havuzSirala(kuy.ags, duzen || 'donusumlu'), oabt: havuzSirala(kuy.oabt, duzen || 'donusumlu') };
   }
 
   // Sabah oturumları AGS derslerinden, öğleden sonra ÖABT'den; biri boşsa diğerinden alır
-  function havuzdanAl(q, grup) {
+  function havuzDizi(q, grup) {
     var bir = grup === 'sabah' ? q.ags : q.oabt;
     var iki = grup === 'sabah' ? q.oabt : q.ags;
-    if (bir.length) return bir.shift();
-    if (iki.length) return iki.shift();
+    if (bir.length) return bir;
+    if (iki.length) return iki;
     return null;
-  }
-
-  function planKapasite(hiz) {
-    var d = konuSuresi(hiz), top = 0;
-    OTURUMLAR.forEach(function (o) {
-      if (o.grup === 'sabah' || o.grup === 'ogle') top += Math.floor((dkOku(o.bit) - dkOku(o.bas)) / d);
-    });
-    return top;
   }
 
   function tekrarKuyrugu() {
@@ -1011,78 +1099,101 @@
   // Planı bugünden itibaren yeniden dağıtır. Korunanlar: geçmiş günler, biten bloklar, elle eklenenler.
   function planUret(ayar) {
     var buHafta = haftaBasi(), bi = bugunIdx(), simdi = simdiDk();
-    var dkSure = konuSuresi(ayar.hiz);
+    var duzen = ayar.duzen || 'donusumlu', maks = ayar.maks || 0, sureMod = ayar.sureMod || 'gercek';
     var yeniPlan = {}, korunan = {}, say = { konu: 0, tekrar: 0 };
     var i;
 
     // Bu haftada bugünden itibaren yerleştirilecek gün kaldı mı? Kalmadıysa gelecek haftayı planla.
-    var kalanVar = (ayar.gunler[bi] && simdi < dkOku('17:00')) || (ayar.aksam[bi] && simdi < dkOku('22:30'));
-    for (i = bi + 1; i < 7; i++) { if (ayar.gunler[i] || ayar.aksam[i]) kalanVar = true; }
+    var gunBit = function (g) { return sablonBitis(ayar.sablon[g]); };
+    var kalanVar = (gunBit(bi) && simdi < gunBit(bi)) || (ayar.aksam[bi] && simdi < dkOku('22:30'));
+    for (i = bi + 1; i < 7; i++) { if (gunBit(i) || ayar.aksam[i]) kalanVar = true; }
     var hb, basla, bugunSira;
     if (kalanVar) { hb = buHafta; basla = bi; bugunSira = bi; }
     else { hb = (S.planHafta && S.planHafta > buHafta) ? S.planHafta : gunEkle(buHafta, 7); basla = 0; bugunSira = -1; }
     var ayniHafta = (S.planHafta === hb);
 
     for (i = 0; i < 7; i++) {
-      yeniPlan[i] = ayniHafta ? (S.plan[i] || []).filter(function (t) { return i < bugunSira || t.manual || gorevBitti(t); }) : [];
-      yeniPlan[i].forEach(function (t) { if (t.konuId) korunan[t.konuId] = true; });
+      // Geçmiş günlerde yalnızca yapılanlar ve elle eklenenler kalır; kaçırılan otomatik bloklar silinir,
+      // kaçırılan konular havuza döner ve bugünden itibaren yeniden yerleştirilir.
+      yeniPlan[i] = ayniHafta ? (S.plan[i] || []).filter(function (t) { return t.manual || gorevBitti(t); }) : [];
+      yeniPlan[i].forEach(function (t) {
+        if (t.konuId && (gorevBitti(t) || i >= bugunSira)) korunan[t.konuId] = true;
+      });
     }
 
-    var q = planHavuz(ayar.dersler, korunan);
+    var q = planHavuz(ayar.dersler, korunan, duzen, ayar.hiz, sureMod);
     var kuyruk = tekrarKuyrugu();
 
     function gunUret(g) {
-      var kept = yeniPlan[g], yeni = [], dolu = {}, tkVar = false, akVar = false;
+      var kept = yeniPlan[g], yeni = [], dolu = {}, tkVar = false, akVar = false, gunKonu = 0;
       kept.forEach(function (t) {
         if (t.bas) dolu[t.bas] = true;
         if (t.oturum === 'tk') tkVar = true;
         if (t.tip === 'aksam') akVar = true;
+        if (t.tip === 'konu') gunKonu++;
       });
       var gtarih = gunEkle(hb, g), bugunmu = (g === bugunSira);
+      var sablon = SABLONLAR[ayar.sablon[g]] || SABLONLAR.yok;
 
-      if (ayar.gunler[g]) {
-        OTURUMLAR.forEach(function (o) {
-          var ob = dkOku(o.bas), oe = dkOku(o.bit);
-          if (o.grup === 'sabah' || o.grup === 'ogle') {
-            var adet = Math.floor((oe - ob) / dkSure);
-            if (adet < 1) {
-              if (!dolu[o.bas] && !(bugunmu && oe <= simdi)) {
-                yeni.push({ t: 'Soru çözümü & kısa tekrar', tip: 'serbest', oturum: o.id, bas: o.bas, bit: o.bit, done: false });
-              }
-              return;
-            }
-            for (var s = 0; s < adet; s++) {
-              var b = ob + s * dkSure, e = b + dkSure;
-              if (bugunmu && e <= simdi) continue;
-              if (dolu[saatYaz(b)]) continue;
-              var konu = havuzdanAl(q, o.grup);
-              if (!konu) {
-                yeni.push({ t: 'Serbest çalışma & soru çözümü', tip: 'serbest', oturum: o.id, bas: saatYaz(b), bit: o.bit, done: false });
-                break;
-              }
-              yeni.push({ t: konu.konuAd, ders: konu.dersAd, tip: 'konu', konuId: konu.id, oturum: o.id, bas: saatYaz(b), bit: saatYaz(e), done: false });
-              say.konu++;
-            }
-          } else if (o.grup === 'tekrar') {
-            if (bugunmu && oe <= simdi) return;
-            var eklendi = 0, adetT = Math.floor((oe - ob) / TEKRAR_DK);
-            for (var r = 0; r < adetT; r++) {
-              var bt = ob + r * TEKRAR_DK;
-              if (bugunmu && bt + TEKRAR_DK <= simdi) continue;
-              if (dolu[saatYaz(bt)]) continue;
-              var bulunan = -1;
-              for (var x = 0; x < kuyruk.length; x++) { if (kuyruk[x].due <= gtarih) { bulunan = x; break; } }
-              if (bulunan < 0) break;
-              var rp = kuyruk.splice(bulunan, 1)[0];
-              yeni.push({ t: rp.ders + ' · ' + rp.ad, tip: 'tekrar', repeatKonuId: rp.id, n: rp.n, oturum: 'tk', bas: saatYaz(bt), bit: saatYaz(bt + TEKRAR_DK), done: false });
-              eklendi++; say.tekrar++;
-            }
-            if (!eklendi && !tkVar) {
-              yeni.push({ t: 'Genel tekrar & soru çözümü', tip: 'serbest', oturum: 'tk', bas: o.bas, bit: o.bit, done: false });
-            }
-          }
-        });
+      function serbest(o, b, e, ad) {
+        return { t: ad, tip: 'serbest', oturum: o.id, bas: saatYaz(b), bit: saatYaz(e), done: false };
       }
+
+      OTURUMLAR.forEach(function (o) {
+        if (sablon.oturum.indexOf(o.id) === -1) return;
+        var ob = dkOku(o.bas), oe = dkOku(o.bit);
+        if (o.grup === 'sabah' || o.grup === 'ogle') {
+          if (bugunmu && oe <= simdi) return;
+          var c = ob, yerlesen = 0, guard = 0;
+          if (bugunmu) c = Math.max(c, Math.floor(simdi / 5) * 5);
+          // Biten ve elle eklenen bloklar bu oturumda yer tutar
+          var tutulan = kept.filter(function (t) { return t.oturum === o.id && t.bas && t.bit; })
+            .map(function (t) { return { tb: dkOku(t.bas), te: dkOku(t.bit) }; })
+            .sort(function (a, b) { return a.tb - b.tb; });
+          while (guard++ < 40) {
+            tutulan.forEach(function (x) { if (c >= x.tb && c < x.te) c = x.te; });
+            var lim = oe;
+            tutulan.forEach(function (x) { if (x.tb >= c && x.tb < lim) lim = x.tb; });
+            if (lim - c < 10) { if (lim >= oe) break; c = lim; continue; }
+            var sinirDoldu = !!(maks && gunKonu >= maks);
+            var arr = sinirDoldu ? null : havuzDizi(q, o.grup);
+            if (!arr) {
+              if (lim - c >= 15) yeni.push(serbest(o, c, lim, sinirDoldu ? 'Soru çözümü & kısa tekrar' : 'Serbest çalışma & soru çözümü'));
+              if (lim >= oe) break;
+              c = lim; continue;
+            }
+            var it = arr[0], e = c + it.dk;
+            if (e > lim) {
+              if (yerlesen === 0 && (lim - c) >= it.dk * 0.75) { e = lim; }
+              else {
+                if (lim - c >= 15) yeni.push(serbest(o, c, lim, yerlesen ? 'Konu sonrası soru çözümü' : 'Soru çözümü & kısa tekrar'));
+                if (lim >= oe) break;
+                c = lim; continue;
+              }
+            }
+            arr.shift();
+            yeni.push({ t: it.konuAd, ders: it.dersAd, tip: 'konu', konuId: it.id, oturum: o.id, bas: saatYaz(c), bit: saatYaz(e), done: false });
+            say.konu++; gunKonu++; yerlesen++; c = e;
+          }
+        } else if (o.grup === 'tekrar') {
+          if (bugunmu && oe <= simdi) return;
+          var eklendi = 0, adetT = Math.floor((oe - ob) / TEKRAR_DK);
+          for (var r = 0; r < adetT; r++) {
+            var bt = ob + r * TEKRAR_DK;
+            if (bugunmu && bt + TEKRAR_DK <= simdi) continue;
+            if (dolu[saatYaz(bt)]) continue;
+            var bulunan = -1;
+            for (var x = 0; x < kuyruk.length; x++) { if (kuyruk[x].due <= gtarih) { bulunan = x; break; } }
+            if (bulunan < 0) break;
+            var rp = kuyruk.splice(bulunan, 1)[0];
+            yeni.push({ t: rp.ders + ' · ' + rp.ad, tip: 'tekrar', repeatKonuId: rp.id, n: rp.n, oturum: 'tk', bas: saatYaz(bt), bit: saatYaz(bt + TEKRAR_DK), done: false });
+            eklendi++; say.tekrar++;
+          }
+          if (!eklendi && !tkVar) {
+            yeni.push({ t: 'Genel tekrar & soru çözümü', tip: 'serbest', oturum: 'tk', bas: o.bas, bit: o.bit, done: false });
+          }
+        }
+      });
 
       if (ayar.aksam[g] && !akVar && !(bugunmu && dkOku('22:30') <= simdi)) {
         yeni.push({ t: 'Soru çözümü & deneme', tip: 'aksam', oturum: 'ak', bas: '21:00', bit: '22:30', done: false });
@@ -1107,18 +1218,83 @@
     var dersler = (pa.seciliDersler || []).filter(gecerli);
     if (!dersler.length) dersler = ['eb', 'ok'].filter(gecerli);
     var dizi7 = function (a, v) { return (Array.isArray(a) && a.length === 7) ? a.map(function (x) { return !!x; }) : v; };
+    var sablon = (Array.isArray(pa.gunSablon) && pa.gunSablon.length === 7 && pa.gunSablon.every(function (x) { return !!SABLONLAR[x]; }))
+      ? pa.gunSablon.slice()
+      : dizi7(pa.aktifGunler, [true, true, true, true, true, false, false]).map(function (v) { return v ? 'tam' : 'yok'; });
     return {
       dersler: dersler,
-      gunler: dizi7(pa.aktifGunler, [true, true, true, true, true, false, false]),
+      sablon: sablon,
       aksam: dizi7(pa.aksamGunler, [true, true, true, true, false, false, false]),
-      hiz: HIZLAR.indexOf(pa.hiz) !== -1 ? pa.hiz : 1.5
+      hiz: HIZLAR.indexOf(pa.hiz) !== -1 ? pa.hiz : 1.5,
+      duzen: DUZENLER.some(function (x) { return x.id === pa.duzen; }) ? pa.duzen : 'donusumlu',
+      maks: MAKS_SECENEK.indexOf(pa.maks) !== -1 ? pa.maks : 0,
+      sure: pa.sureMod === 'sabit' ? 'sabit' : 'gercek'
     };
+  }
+
+  function wzAyar(w) {
+    return { dersler: w.dersler, sablon: w.sablon, aksam: w.aksam, hiz: w.hiz, duzen: w.duzen, maks: w.maks, sureMod: w.sure };
   }
 
   function wzGecerli(w) {
     if (!w.dersler.length) return 'En az bir ders seç.';
-    if (!w.gunler.some(Boolean) && !w.aksam.some(Boolean)) return 'En az bir kütüphane günü ya da akşam etüdü günü seç.';
+    if (!w.sablon.some(function (x) { return x !== 'yok'; }) && !w.aksam.some(Boolean)) return 'En az bir çalışma günü ya da akşam etüdü günü seç.';
+    var q = planHavuz(w.dersler, {}, w.duzen, w.hiz, w.sure);
+    if (!q.ags.length && !q.oabt.length) return 'Seçtiğin derslerde plana girecek konu kalmadı.';
     return '';
+  }
+
+  // Haftalık tempo ve sınav hedefi tahmini
+  function wzOngoru(w) {
+    var q = planHavuz(w.dersler, {}, w.duzen, w.hiz, w.sure);
+    var kalan = q.ags.length + q.oabt.length;
+    var ort = function (a) { if (!a.length) return 0; var t = 0; a.forEach(function (x) { t += x.dk; }); return t / a.length; };
+    var dAgs = ort(q.ags), dOabt = ort(q.oabt);
+    var haftalik = 0, g;
+    for (g = 0; g < 7; g++) {
+      var cap = 0;
+      (SABLONLAR[w.sablon[g]] || SABLONLAR.yok).oturum.forEach(function (id) {
+        OTURUMLAR.forEach(function (o) {
+          if (o.id !== id || (o.grup !== 'sabah' && o.grup !== 'ogle')) return;
+          var d = o.grup === 'sabah' ? (dAgs || dOabt) : (dOabt || dAgs);
+          if (!d) return;
+          var len = dkOku(o.bit) - dkOku(o.bas), n = Math.floor(len / d);
+          if (n < 1 && len >= d * 0.75) n = 1;
+          cap += n;
+        });
+      });
+      if (w.maks) cap = Math.min(cap, w.maks);
+      haftalik += cap;
+    }
+    var hafta = (haftalik && kalan) ? Math.ceil(kalan / haftalik) : 0;
+    var sinav = null, tip = {};
+    w.dersler.forEach(function (id) { tip[dersBul(id).sinav] = true; });
+    [['ags', 'AGS'], ['oabt', 'ÖABT']].forEach(function (k) {
+      if (!tip[k[0]] || !S.tarih || !S.tarih[k[0]]) return;
+      var n = kalanGun(S.tarih[k[0]]);
+      if (n !== null && !isNaN(n) && n > 0 && (!sinav || n < sinav.n)) sinav = { ad: k[1], n: n };
+    });
+    var metin = '';
+    if (hafta && sinav) {
+      var hk = Math.floor(sinav.n / 7), TAMPON = 4;
+      if (hk - TAMPON <= 0) metin = sinav.ad + ' sınavına ' + hk + ' hafta kaldı; konuları bitirip tekrar etmeye yetecek süre çok kısa.';
+      else if (hafta <= hk - TAMPON) metin = 'Bu tempoyla konular ' + sinav.ad + ' sınavından yaklaşık ' + (hk - hafta) + ' hafta önce biter (en az ' + TAMPON + ' hafta tekrar payı bırakılarak hesaplandı).';
+      else metin = sinav.ad + ' sınavına ' + hk + ' hafta var. ' + TAMPON + ' haftalık tekrar payıyla yetişmek için haftada en az ' + Math.ceil(kalan / (hk - TAMPON)) + ' konu gerekir; bu planda ' + haftalik + '. Daha çok gün/oturum seç, hızı artır ya da günlük sınırı kaldır.';
+      if (!(S.tarih && S.tarih.onayli)) metin += ' (Sınav tarihi henüz kesinleşmedi, Ayarlar’dan girebilirsin.)';
+    }
+    return { kalan: kalan, haftalik: haftalik, hafta: hafta, metin: metin };
+  }
+
+  // Planı oluşturmadan önce ne olacağını gösterir (planUret saf fonksiyondur, durumu değiştirmez)
+  function wzOnizle(w) {
+    var r = planUret(wzAyar(w)), g, gun = [], mevcut = 0;
+    for (g = 0; g < 7; g++) {
+      var n = 0;
+      (r.plan[g] || []).forEach(function (t) { if (t.tip === 'konu' && !gorevBitti(t)) n++; });
+      gun.push(n);
+      (S.plan[g] || []).forEach(function (t) { if (t.tip === 'konu' && !t.manual && !gorevBitti(t)) mevcut++; });
+    }
+    return { r: r, gun: gun, mevcut: mevcut, gelecek: r.hafta !== haftaBasi() };
   }
 
   /* ---- Görünümler ---- */
@@ -1245,50 +1421,116 @@
     return h;
   }
 
+  function wzSeg(action, secenekler, aktif, ek) {
+    return '<div class="sh-seg c' + secenekler.length + '" role="group">' + secenekler.map(function (x) {
+      var on = String(x.v) === String(aktif);
+      return '<button class="sh-seg-b' + (on ? ' on' : '') + '" data-a="' + action + '" data-val="' + x.v + '"' + (ek || '') + ' aria-pressed="' + on + '">' + x.ad + '</button>';
+    }).join('') + '</div>';
+  }
+
   function wizardHtml() {
     var w = ui.wz, i;
     var h = '<div class="sh-wrap"><div class="sh-head"><h2 class="sh-title">Haftamı planla</h2>' +
       '<button class="sh-x" data-a="sheetkapat" aria-label="Kapat">' + IC.x + '</button></div><div class="sh-body">';
 
+    // 1 · Dersler
+    var disarida = 0;
     h += '<section class="sh-sec"><h3>1 · Hangi dersleri çalışacaksın?</h3><div class="sh-chips">';
     DERSLER.forEach(function (d) {
       var on = w.dersler.indexOf(d.id) !== -1;
-      var kalan = tumKonular(d).filter(function (k) { return etkinDurum(k.id) < 2; }).length;
+      var ks = tumKonular(d).filter(function (k) { return etkinDurum(k.id) < 2; });
+      var kalan = ks.filter(function (k) { return !planDisi(k.id); }).length;
+      if (on) disarida += ks.length - kalan;
       h += '<button class="sh-chip' + (on ? ' on' : '') + '" data-a="wzders" data-id="' + d.id + '" aria-pressed="' + on + '"><span>' + esc(d.kisa) + '</span><small>' + kalan + ' konu kaldı</small></button>';
     });
-    h += '</div><p class="sh-hint">Sabah oturumlarına AGS dersleri, öğleden sonra oturumlarına ÖABT dersleri yerleşir. Bir grup seçmezsen tüm oturumlar seçtiğin gruptan dolar.</p></section>';
+    h += '</div><div class="sh-inline"><button class="sh-link" data-a="kapsamac">Konuları tek tek ayarla</button>' +
+      (disarida ? '<span class="sh-hint">' + disarida + ' konu plan dışında</span>' : '') + '</div>' +
+      '<p class="sh-hint">Sabah oturumlarına AGS dersleri, öğleden sonra oturumlarına ÖABT dersleri yerleşir. Bir grup seçmezsen tüm oturumlar seçtiğin gruptan dolar.</p></section>';
 
-    h += '<section class="sh-sec"><h3>2 · Hangi günler kütüphanedesin?</h3><div class="sh-days">';
-    for (i = 0; i < 7; i++) {
-      h += '<button class="sh-gun' + (w.gunler[i] ? ' on' : '') + '" data-a="wzgun" data-g="' + i + '" aria-pressed="' + w.gunler[i] + '" aria-label="' + GUNLER[i] + '">' + GUN_KISA[i] + '</button>';
-    }
-    h += '</div><p class="sh-hint">Seçmediğin günler dinlenme günü olur. İstersen o güne sonradan blok ekleyebilirsin.</p></section>';
-
-    h += '<section class="sh-sec"><h3>3 · Akşam etüdü hangi günler? (21:00–22:30)</h3><div class="sh-days">';
-    for (i = 0; i < 7; i++) {
-      h += '<button class="sh-gun' + (w.aksam[i] ? ' on' : '') + '" data-a="wzaksam" data-g="' + i + '" aria-pressed="' + w.aksam[i] + '" aria-label="' + GUNLER[i] + ' akşam etüdü">' + GUN_KISA[i] + '</button>';
-    }
-    h += '</div></section>';
-
-    h += '<section class="sh-sec"><h3>4 · Video izleme hızı</h3><div class="sh-seg" role="group" aria-label="Video izleme hızı">';
-    HIZLAR.forEach(function (x) {
-      h += '<button class="sh-seg-b' + (w.hiz === x ? ' on' : '') + '" data-a="wzhiz" data-val="' + x + '" aria-pressed="' + (w.hiz === x) + '">' + hizYaz(x) + '</button>';
+    // 2 · Çalışma düzeni
+    h += '<section class="sh-sec"><h3>2 · Dersler nasıl sıralansın?</h3><div class="sh-chips">';
+    DUZENLER.forEach(function (x) {
+      h += '<button class="sh-chip' + (w.duzen === x.id ? ' on' : '') + '" data-a="wzduzen" data-val="' + x.id + '" aria-pressed="' + (w.duzen === x.id) + '"><span>' + x.ad + '</span><small>' + x.not + '</small></button>';
     });
     h += '</div></section>';
 
-    var q = planHavuz(w.dersler, {});
-    var kalanKonu = q.ags.length + q.oabt.length;
-    var gunSayi = w.gunler.filter(Boolean).length, kap = planKapasite(w.hiz);
-    var hafta = (gunSayi && kap && kalanKonu) ? Math.ceil(kalanKonu / (kap * gunSayi)) : 0;
-    var hata = wzGecerli(w);
-    h += '<div class="sh-ozet"><b>' + hizYaz(w.hiz) + ' hızda bir konu ≈ ' + konuSuresi(w.hiz) + ' dk.</b> Günde en fazla ' + kap + ' konu · ' + gunSayi + ' kütüphane günü · ' + kalanKonu + ' konu kaldı' +
-      (hafta ? ' · yaklaşık ' + hafta + ' hafta' : '') + '.</div>';
-    h += '<p class="sh-hint">Tekrarlar (1. hafta → 3. hafta → aylık) her gün 16:30–17:00 arasına, 10 dakikalık bloklar halinde yerleşir. ' +
-      (planToplam() > 0 ? 'Biten ve elle eklediğin bloklar korunur; bitmeyen otomatik bloklar bugünden itibaren yeniden dağıtılır. Geçmiş günlere dokunulmaz.' : '') + '</p>';
+    // 3 · Günler
+    h += '<section class="sh-sec"><h3>3 · Her gün nasıl çalışacaksın?</h3><div class="sh-gunler">';
+    var secs = SABLON_SIRA.map(function (k) { return { v: k, ad: SABLONLAR[k].ad }; });
+    for (i = 0; i < 7; i++) {
+      h += '<div class="sh-gunrow"><span class="sh-gunad">' + GUNLER[i] + '</span>' + wzSeg('wzsablon', secs, w.sablon[i], ' data-g="' + i + '"') +
+        '<button class="sh-aksam-b' + (w.aksam[i] ? ' on' : '') + '" data-a="wzaksam" data-g="' + i + '" aria-pressed="' + w.aksam[i] + '" aria-label="' + GUNLER[i] + ' akşam etüdü">Akşam</button></div>';
+    }
+    h += '</div><p class="sh-hint">Tam gün 09:00–17:00 · Sabah 09:00–14:00 · Öğleden sonra 14:30–17:00 · Akşam etüdü 21:00–22:30. ' +
+      'Tekrar blokları yalnızca “Tam gün” ve “Öğleden sonra” günlerine yerleşir.</p></section>';
+
+    // 4 · Hız ve süre
+    h += '<section class="sh-sec"><h3>4 · Video hızı ve konu süresi</h3>' +
+      wzSeg('wzhiz', HIZLAR.map(function (x) { return { v: x, ad: hizYaz(x) }; }), w.hiz) +
+      '<div class="sh-gap"></div>' +
+      wzSeg('wzsure', [{ v: 'gercek', ad: 'Gerçek video süresi' }, { v: 'sabit', ad: 'Sabit 45 dk ÷ hız' }], w.sure) +
+      '<p class="sh-hint">“Gerçek video süresi”nde her ders için Süre Analizi’ndeki toplam video süresi konu sayısına bölünür: ' +
+      w.dersler.map(function (id) { return esc(dersBul(id).kisa) + ' ≈ ' + konuSuresi(w.hiz, id, w.sure) + ' dk'; }).join(', ') + '.</p></section>';
+
+    // 5 · Günlük sınır
+    h += '<section class="sh-sec"><h3>5 · Günde en fazla kaç konu?</h3>' +
+      wzSeg('wzmaks', MAKS_SECENEK.map(function (x) { return { v: x, ad: x ? String(x) : 'Sınırsız' }; }), w.maks) +
+      '<p class="sh-hint">Sınıra ulaşılınca kalan oturumlar soru çözümüne ayrılır.</p></section>';
+
+    // Özet + önizleme
+    var og = wzOngoru(w), hata = wzGecerli(w);
+    h += '<div class="sh-ozet"><b>Haftada yaklaşık ' + og.haftalik + ' konu · ' + og.kalan + ' konu kaldı' + (og.hafta ? ' · yaklaşık ' + og.hafta + ' hafta' : '') + '.</b>' +
+      (og.metin ? '<br>' + og.metin : '') + '</div>';
+
+    if (!hata) {
+      var on = wzOnizle(w), r = on.r, hb = r.hafta;
+      h += '<div class="sh-ozet sh-onizle"><b>Önizleme</b><br>' +
+        (on.gelecek ? 'Bu hafta için çalışma günü kalmadığından plan <b>gelecek haftaya</b> (' : 'Bu haftanın kalan günleri planlanır (') +
+        tarihEtiket(hb) + ' – ' + tarihEtiket(gunEkle(hb, 6)) + (on.gelecek ? ') yazılır.' : ').') +
+        '<div class="sh-onizle-gun">' + GUN_KISA.map(function (g, ix) { return '<span class="' + (on.gun[ix] ? 'var' : '') + '"><i>' + g + '</i>' + (on.gun[ix] || '—') + '</span>'; }).join('') + '</div>' +
+        r.say.konu + ' yeni konu ve ' + r.say.tekrar + ' tekrar yerleşir' + (r.kalanTekrar ? '; ' + r.kalanTekrar + ' tekrar bu haftaya sığmaz (Panel’de görünür)' : '') + '.' +
+        (on.gelecek && planToplam() > 0 && S.planHafta !== hb ? '<br>Şu anki haftanın planı bununla değişir; yaptıkların Tamamlananlar’da kalır.' : '') +
+        (!on.gelecek && on.mevcut ? '<br>Şu an planda bekleyen ' + on.mevcut + ' konu bloğu yeniden dağıtılır; biten ve elle eklediklerin korunur.' : '') + '</div>';
+    }
+    h += '<p class="sh-hint">Tekrarlar (1. hafta → 3. hafta → aylık) 10 dakikalık bloklar halinde 16:30–17:00 arasına yerleşir.</p>';
     if (hata) h += '<p class="sh-uyari" role="alert">' + hata + '</p>';
 
     h += '</div><div class="sh-foot"><button class="pl-btn" data-a="sheetkapat">Vazgeç</button>' +
       '<button class="pl-btn pl-btn-primary" data-a="wzolustur"' + (hata ? ' disabled' : '') + '>Planı oluştur</button></div></div>';
+    return h;
+  }
+
+  // Plana girecek konuları tek tek aç/kapat
+  function kapsamHtml() {
+    var s = ui.sheet, w = ui.wz;
+    var dersIds = (w && w.dersler.length) ? w.dersler : [DERSLER[0].id];
+    if (dersIds.indexOf(s.ders) === -1) s.ders = dersIds[0];
+    var d = dersBul(s.ders), atla = (S.planAyarlar && S.planAyarlar.atla) || {};
+    var h = '<div class="sh-wrap"><div class="sh-head"><div><h2 class="sh-title">Plana girecek konular</h2>' +
+      '<div class="sh-sub">Kapattığın konular plana yazılmaz ve “Bitti” sayılmaz.</div></div>' +
+      '<button class="sh-x" data-a="kapsamkapat" aria-label="Geri">' + IC.x + '</button></div>';
+    h += '<div class="sh-chips sh-chips-row">';
+    dersIds.forEach(function (id) {
+      h += '<button class="sh-chip sm' + (id === d.id ? ' on' : '') + '" data-a="kapders" data-id="' + id + '" aria-pressed="' + (id === d.id) + '">' + esc(dersBul(id).kisa) + '</button>';
+    });
+    h += '</div><div class="sh-body sh-list">';
+    var say = 0;
+    gruplar(d).forEach(function (gr, gi) {
+      var ks = gr.konular.filter(function (k) { return etkinDurum(k.id) < 2; });
+      if (!ks.length) return;
+      var acik = ks.filter(function (k) { return !atla[k.id]; }).length;
+      h += '<div class="sh-grup sh-grup-satir"><span>' + esc(gr.ad) + '</span><button class="sh-mini" data-a="kapgrup" data-i="' + gi + '">' + (acik ? 'Grubu kapat' : 'Grubu aç') + ' · ' + acik + '/' + ks.length + '</button></div>';
+      ks.forEach(function (k) {
+        say++;
+        var kapali = !!atla[k.id];
+        h += '<div class="sh-konu-satir"><button class="sh-konu' + (kapali ? ' kapali' : '') + '" data-a="kaptoggle" data-id="' + esc(k.id) + '" aria-pressed="' + (!kapali) + '">' +
+          '<span class="sh-konu-ad">' + esc(k.ad) + '</span><span class="sh-konu-meta"><span class="sh-tag' + (kapali ? '' : ' plan') + '">' + (kapali ? 'Plan dışı' : 'Planda') + '</span></span></button>' +
+          '<button class="sh-mini" data-a="kapbasla" data-id="' + esc(k.id) + '">Buradan başla</button></div>';
+      });
+    });
+    if (!say) h += '<div class="sh-bos">Bu derste bekleyen konu yok.</div>';
+    h += '</div><div class="sh-foot"><button class="pl-btn" data-a="kapsifirla">Bu dersin hepsini planla</button>' +
+      '<button class="pl-btn pl-btn-primary" data-a="kapsamkapat">Bitti</button></div></div>';
     return h;
   }
 
@@ -1352,7 +1594,7 @@
     if (!ui.sheet || !sheetEl) return;
     var eskiBody = sheetEl.querySelector('.sh-body');
     var top = (eskiBody && !sifirla) ? eskiBody.scrollTop : 0;
-    sheetEl.innerHTML = ui.sheet.tip === 'wz' ? wizardHtml() : konuSheetHtml();
+    sheetEl.innerHTML = ui.sheet.tip === 'wz' ? wizardHtml() : ui.sheet.tip === 'kapsam' ? kapsamHtml() : konuSheetHtml();
     var yeniBody = sheetEl.querySelector('.sh-body');
     if (yeniBody) yeniBody.scrollTop = top;
   }
@@ -1794,15 +2036,153 @@
   }
 
   /* ================= Çizim ================= */
+
+  /* ================= Tamamlananlar ================= */
+  function sureYaz(dk) {
+    dk = Math.round(dk || 0);
+    var sa = Math.floor(dk / 60), m = dk % 60;
+    if (!sa) return m + ' dk';
+    return sa + ' sa' + (m ? ' ' + m + ' dk' : '');
+  }
+
+  // Bitiş tarihi ve süre. Eski kayıtlarda tarih tekrar kaydından, süre bugünkü hızdan tahmin edilir.
+  function bitisBilgi(id) {
+    var b = (S.bitis || {})[id], tk = S.tekrar[id];
+    var hiz = (S.planAyarlar && S.planAyarlar.hiz) || 1.5;
+    var kb = konuBul(id);
+    return { tarih: (b && b.t) || (tk && tk.baslangic) || '', dk: (b && b.dk) || konuSuresi(hiz, kb ? kb.d.id : null) };
+  }
+
+  function gecmisTopla() {
+    var liste = [], dersler = [];
+    DERSLER.forEach(function (d) {
+      var ks = tumKonular(d), bitti = 0, dk = 0;
+      ks.forEach(function (k) {
+        if ((S.durum[k.id] || 0) < 2) return;
+        var b = bitisBilgi(k.id);
+        bitti++; dk += b.dk;
+        liste.push({ id: k.id, ad: k.ad, ders: d.kisa, dersId: d.id, tarih: b.tarih, dk: b.dk, tk: S.tekrar[k.id] });
+      });
+      dersler.push({ id: d.id, ad: d.kisa, toplam: ks.length, bitti: bitti, dk: dk });
+    });
+    return { liste: liste, dersler: dersler };
+  }
+
+  function viewGecmis() {
+    var g = gecmisTopla(), liste = g.liste, i;
+    var hiz = (S.planAyarlar && S.planAyarlar.hiz) || 1.5;
+    var toplamKonu = 0, toplamBitti = liste.length, konuDk = 0;
+    g.dersler.forEach(function (d) { toplamKonu += d.toplam; });
+    liste.forEach(function (x) { konuDk += x.dk; });
+    var tekrarSay = (S.istatistik && S.istatistik.toplamTekrar) || 0;
+    var tekrarDk = tekrarSay * TEKRAR_DK;
+    var yuzde = toplamKonu ? Math.round(toplamBitti / toplamKonu * 100) : 0;
+
+    var hb = haftaBasi(), haftaDk = 0, haftaKonu = 0;
+    liste.forEach(function (x) {
+      if (x.tarih && x.tarih >= hb && x.tarih <= gunEkle(hb, 6)) { haftaDk += x.dk; haftaKonu++; }
+    });
+
+    var h = head('Tamamlananlar') + '<div class="gc-wrap">';
+
+    // Özet
+    h += '<div class="gc-stats">' +
+      '<div class="gc-stat"><div class="gc-stat-n">' + toplamBitti + '<small> / ' + toplamKonu + '</small></div><div class="gc-stat-l">Biten konu · %' + yuzde + '</div></div>' +
+      '<div class="gc-stat"><div class="gc-stat-n">' + sureYaz(konuDk + tekrarDk) + '</div><div class="gc-stat-l">Toplam çalışma süresi</div></div>' +
+      '<div class="gc-stat"><div class="gc-stat-n">' + sureYaz(haftaDk) + '</div><div class="gc-stat-l">Bu hafta · ' + haftaKonu + ' konu</div></div>' +
+      '<div class="gc-stat"><div class="gc-stat-n">' + tekrarSay + '</div><div class="gc-stat-l">Yapılan tekrar</div></div>' +
+      '</div>';
+
+    if (!toplamBitti) {
+      h += '<div class="gc-bos"><b>Henüz bitirilen konu yok.</b><span>Bir konuyu “Bitti” işaretlediğinde burada görünür; süre otomatik hesaplanır.</span></div></div>';
+      return h;
+    }
+
+    // Son 7 gün
+    var gunler = [], enCok = 1;
+    for (i = 6; i >= 0; i--) {
+      var ds = gunEkle(bugunStr(), -i), n = 0, dk = 0;
+      liste.forEach(function (x) { if (x.tarih === ds) { n++; dk += x.dk; } });
+      var p = ds.split('-');
+      gunler.push({ ds: ds, n: n, dk: dk, ad: GUN_KISA[(new Date(+p[0], +p[1] - 1, +p[2]).getDay() + 6) % 7], bugun: i === 0 });
+      if (n > enCok) enCok = n;
+    }
+    h += '<section class="gc-card"><div class="gc-card-head"><h2>Son 7 gün</h2><span>Günde bitirilen konu</span></div><div class="gc-days">';
+    gunler.forEach(function (x) {
+      h += '<div class="gc-day' + (x.bugun ? ' today' : '') + '" title="' + x.n + ' konu · ' + sureYaz(x.dk) + '">' +
+        '<div class="gc-day-n">' + (x.n || '') + '</div>' +
+        '<div class="gc-day-bar"><i style="height:' + (x.n ? Math.max(8, Math.round(x.n / enCok * 100)) : 0) + '%"></i></div>' +
+        '<div class="gc-day-ad">' + x.ad + '</div><div class="gc-day-sure">' + (x.dk ? sureYaz(x.dk) : '—') + '</div></div>';
+    });
+    h += '</div></section>';
+
+    // Derslere göre
+    h += '<section class="gc-card"><div class="gc-card-head"><h2>Derslere göre</h2><span>Biten konu ve süre</span></div><div class="gc-ders">';
+    g.dersler.forEach(function (d) {
+      var y = d.toplam ? Math.round(d.bitti / d.toplam * 100) : 0;
+      h += '<div class="gc-ders-row"><div class="gc-ders-ad">' + esc(d.ad) + '</div>' +
+        '<div class="gc-bar"><i style="width:' + y + '%"></i></div>' +
+        '<div class="gc-ders-say">' + d.bitti + ' / ' + d.toplam + '</div>' +
+        '<div class="gc-ders-sure">' + (d.dk ? sureYaz(d.dk) : '—') + '</div></div>';
+    });
+    h += '</div></section>';
+
+    // Bitirilen konular, güne göre
+    var sec = ui.gecmisDers || '';
+    var sirali = liste.filter(function (x) { return !sec || x.dersId === sec; });
+    sirali.sort(function (a, b) {
+      if (a.tarih === b.tarih) return a.ad < b.ad ? -1 : 1;
+      if (!a.tarih) return 1;
+      if (!b.tarih) return -1;
+      return a.tarih < b.tarih ? 1 : -1;
+    });
+    var limit = ui.gecmisSay || 30;
+    h += '<section class="gc-card"><div class="gc-card-head"><h2>Bitirilen konular</h2><span>' + sirali.length + ' konu</span></div>';
+    h += '<div class="gc-chips"><button class="gc-chip' + (!sec ? ' on' : '') + '" data-a="gecmisders" data-id="">Tümü</button>';
+    g.dersler.forEach(function (d) {
+      if (!d.bitti) return;
+      h += '<button class="gc-chip' + (sec === d.id ? ' on' : '') + '" data-a="gecmisders" data-id="' + d.id + '">' + esc(d.ad) + ' · ' + d.bitti + '</button>';
+    });
+    h += '</div>';
+    var sonTarih = null, grupAcik = false;
+    sirali.slice(0, limit).forEach(function (x) {
+      if (x.tarih !== sonTarih) {
+        if (grupAcik) h += '</div>';
+        var gn = 0, gdk = 0;
+        sirali.forEach(function (y) { if (y.tarih === x.tarih) { gn++; gdk += y.dk; } });
+        var etiket = x.tarih ? (x.tarih === bugunStr() ? 'Bugün' : x.tarih === gunEkle(bugunStr(), -1) ? 'Dün' : tarihEtiket(x.tarih)) : 'Tarihi bilinmeyen';
+        h += '<div class="gc-grup"><div class="gc-grup-head"><b>' + etiket + '</b><span>' + gn + ' konu · ' + sureYaz(gdk) + '</span></div>';
+        sonTarih = x.tarih; grupAcik = true;
+      }
+      var tk = x.tk, tkYazi = '';
+      if (tk && tekrarVakti(x.id)) tkYazi = '<span class="gc-tk due">Tekrar zamanı</span>';
+      else if (tk && tk.n > 0) tkYazi = '<span class="gc-tk ok">' + tk.n + '. tekrar yapıldı</span>';
+      else if (tk && tk.sonraki) tkYazi = '<span class="gc-tk">Tekrar ' + fmtKisa(tk.sonraki) + '</span>';
+      h += '<div class="gc-row"><span class="gc-tik">' + IC.check + '</span>' +
+        '<div class="gc-row-body"><div class="gc-row-ad">' + esc(x.ad) + '</div><div class="gc-row-meta"><span>' + esc(x.ders) + '</span>' + tkYazi + '</div></div>' +
+        '<div class="gc-row-sure">' + sureYaz(x.dk) + '</div></div>';
+    });
+    if (grupAcik) h += '</div>';
+    if (sirali.length > limit) {
+      h += '<button class="gc-daha" data-a="gecmisdaha">Daha fazla göster (' + (sirali.length - limit) + ' konu daha)</button>';
+    }
+    h += '</section>';
+
+    h += '<p class="gc-not">Süreler tahmindir: her konu, bitirildiği andaki plan hızına (' + hizYaz(hiz) + ') ve ' + (sureModu() === 'sabit' ? 'sabit 45 dk video süresine' : 'dersin video süresine') + ' göre sayılır. Tekrarlar 10 dk sayılır.</p>';
+    return h + '</div>';
+  }
+
   var NAV = [
     { id: 'panel', ad: 'Panel', ic: IC.panel },
     { id: 'plan', ad: 'Haftalık Plan', ic: IC.plan },
+    { id: 'gecmis', ad: 'Tamamlananlar', ic: IC.gecmis },
     { id: 'deneme', ad: 'Denemeler', ic: IC.deneme }
   ];
   var VIEWS = {
     panel: viewPanel,
     plan: viewPlan,
     deneme: viewDeneme,
+    gecmis: viewGecmis,
     ags: viewPanel,
     sureler: viewPlan,
     oabt: viewPanel
@@ -1862,6 +2242,8 @@
     ders: function (el) { ui.ders = el.dataset.id; renderKorumali(); },
     agsders: function (el) { ui.agsDers = el.dataset.id; render(); },
     denemetur: function (el) { ui.denemeTur = el.dataset.id; render(); },
+    gecmisders: function (el) { ui.gecmisDers = el.dataset.id || ''; ui.gecmisSay = 30; renderKorumali(); },
+    gecmisdaha: function () { ui.gecmisSay = (ui.gecmisSay || 30) + 30; renderKorumali(); },
     toggle: function (el) {
       var id = el.dataset.id;
       var st = S.durum[id] || 0;
@@ -1985,16 +2367,64 @@
       if (ix === -1) a.push(id); else a.splice(ix, 1);
       sheetCiz();
     },
-    wzgun: function (el) { var g = +el.dataset.g; ui.wz.gunler[g] = !ui.wz.gunler[g]; sheetCiz(); },
+    wzsablon: function (el) { ui.wz.sablon[+el.dataset.g] = el.dataset.val; sheetCiz(); },
     wzaksam: function (el) { var g = +el.dataset.g; ui.wz.aksam[g] = !ui.wz.aksam[g]; sheetCiz(); },
     wzhiz: function (el) { ui.wz.hiz = parseFloat(el.dataset.val) || 1.5; sheetCiz(); },
+    wzduzen: function (el) { ui.wz.duzen = el.dataset.val; sheetCiz(); },
+    wzsure: function (el) { ui.wz.sure = el.dataset.val === 'sabit' ? 'sabit' : 'gercek'; sheetCiz(); },
+    wzmaks: function (el) { ui.wz.maks = parseInt(el.dataset.val, 10) || 0; sheetCiz(); },
+    kapsamac: function () {
+      var w = ui.wz;
+      ui.sheet = { tip: 'kapsam', ders: (w && w.dersler[0]) || DERSLER[0].id };
+      sheetCiz(true);
+    },
+    kapsamkapat: function () { ui.sheet = { tip: 'wz' }; sheetCiz(true); },
+    kapders: function (el) { if (ui.sheet) { ui.sheet.ders = el.dataset.id; sheetCiz(true); } },
+    kaptoggle: function (el) {
+      var a = atlaMap(), id = el.dataset.id;
+      if (a[id]) delete a[id]; else a[id] = true;
+      kaydet(); sheetCiz();
+    },
+    kapgrup: function (el) {
+      var gr = gruplar(dersBul(ui.sheet.ders))[+el.dataset.i];
+      if (!gr) return;
+      var a = atlaMap(), ks = gr.konular.filter(function (k) { return etkinDurum(k.id) < 2; });
+      var hepsiKapali = ks.every(function (k) { return a[k.id]; });
+      ks.forEach(function (k) { if (hepsiKapali) delete a[k.id]; else a[k.id] = true; });
+      kaydet(); sheetCiz();
+    },
+    kapbasla: function (el) {
+      var a = atlaMap(), bulundu = false;
+      gruplar(dersBul(ui.sheet.ders)).forEach(function (gr) {
+        gr.konular.forEach(function (k) {
+          if (k.id === el.dataset.id) bulundu = true;
+          if (etkinDurum(k.id) >= 2) return;
+          if (bulundu) delete a[k.id]; else a[k.id] = true;
+        });
+      });
+      kaydet(); sheetCiz();
+      toast('Bu konudan öncekiler plan dışı bırakıldı.');
+    },
+    kapsifirla: function () {
+      var a = atlaMap();
+      tumKonular(dersBul(ui.sheet.ders)).forEach(function (k) { delete a[k.id]; });
+      kaydet(); sheetCiz();
+    },
     wzolustur: function () {
       var w = ui.wz;
       if (!w || wzGecerli(w)) return;
-      var r = planUret({ dersler: w.dersler, gunler: w.gunler, aksam: w.aksam, hiz: w.hiz });
+      var r = planUret(wzAyar(w));
       S.plan = r.plan;
       S.planHafta = r.hafta;
-      S.planAyarlar = { v2: true, hiz: w.hiz, seciliDersler: w.dersler.slice(), aktifGunler: w.gunler.slice(), aksamGunler: w.aksam.slice() };
+      var pa = {};
+      Object.keys(S.planAyarlar || {}).forEach(function (k) { pa[k] = S.planAyarlar[k]; });
+      pa.v2 = true; pa.hiz = w.hiz; pa.seciliDersler = w.dersler.slice();
+      pa.gunSablon = w.sablon.slice();
+      pa.aktifGunler = w.sablon.map(function (x) { return x !== 'yok'; });
+      pa.aksamGunler = w.aksam.slice();
+      pa.duzen = w.duzen; pa.maks = w.maks; pa.sureMod = w.sure;
+      S.planAyarlar = pa;
+      S.hiz = w.hiz; ui.sureHiz = w.hiz;
       ui.planGun = (r.hafta === haftaBasi()) ? bugunIdx() : 0;
       kaydet(); sheetKapat(); render();
       toast((r.hafta > haftaBasi() ? 'Bu haftada kalan gün olmadığı için gelecek haftanın planı hazırlandı. ' : '') + r.say.konu + ' konu ve ' + r.say.tekrar + ' tekrar yerleştirildi.' +
@@ -2058,6 +2488,8 @@
       var h = parseFloat(el.dataset.val) || 2.0;
       ui.sureHiz = h;
       S.hiz = h;
+      if (!S.planAyarlar) S.planAyarlar = {};
+      S.planAyarlar.v2 = true; S.planAyarlar.hiz = h;   // plan sihirbazıyla aynı ayar
       kaydet();
       render();
       toast('İzleme hızı ' + h + 'x olarak güncellendi ⚡');
