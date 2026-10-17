@@ -99,7 +99,8 @@
       bitis: {},      // konuId -> { t: bitiş tarihi 'YYYY-MM-DD', dk: o gün için sayılan süre (dakika) }
       istatistik: { seri: 0, sonTarih: '', toplamTekrar: 0 },
       denemeler: [],  // {id, tur, ad, tarih, d, y, b, net}
-      plan: plan,     // gün indeksi -> [{t, done}]
+      plan: plan,     // gün indeksi -> [{t, done}] (aktif haftanın planı)
+      planlar: {},    // haftaPazartesiTarihi -> { 0:[], 1:[], ... 6:[] } (tüm planlanan haftalar)
       tarih: { ags: '2027-07-10', oabt: '2027-07-11', onayli: false },
       hiz: 2.0,       // varsayılan video oynatma hızı (2.0x)
       hedef: 2.0,     // günlük hedef izleme/çalışma süresi (saat)
@@ -114,6 +115,7 @@
         duzen: 'donusumlu',   // sirali | donusumlu | agirlikli
         maks: 0,              // günlük en fazla konu (0 = sınırsız)
         sureMod: 'gercek',    // gercek (video süresi) | sabit (45 dk ÷ hız)
+        kapsam: '1h',         // 1h (1 hafta) | 4h (1 ay) | hepsi (konular bitene kadar)
         atla: {}              // konuId -> true: plana alınmayacak konular
       }
     };
@@ -129,6 +131,12 @@
         if (!d.istatistik) d.istatistik = { seri: 0, sonTarih: '', toplamTekrar: 0 };
         if (!d.bitis || typeof d.bitis !== 'object') d.bitis = {};
         if (!d.planAyarlar) d.planAyarlar = varsayilan().planAyarlar;
+        if (!d.planlar || typeof d.planlar !== 'object') d.planlar = {};
+        if (d.planHafta && d.plan && !d.planlar[d.planHafta]) {
+          var hasP = false;
+          for (var pgi = 0; pgi < 7; pgi++) if (d.plan[pgi] && d.plan[pgi].length) hasP = true;
+          if (hasP) d.planlar[d.planHafta] = d.plan;
+        }
       }
     } catch (e) {
       /* bozuk veri: ezmeden önce ham kaydı yedekle, sonra varsayılana dön */
@@ -146,6 +154,9 @@
     acikNot: {},
     sadeceTekrar: false,
     takvimAcik: false,
+    planMod: 'hafta', // 'hafta' | 'ay' | 'bitis'
+    seciliHafta: '',  // incelenen haftanın Pazartesi tarihi (boşsa S.planHafta veya haftaBasi)
+    seciliAy: '',     // incelenen ay 'YYYY-MM' (boşsa bu ay)
     sureHiz: (S.planAyarlar && S.planAyarlar.hiz) || S.hiz || 2.0,   // tek hız ayarı: planAyarlar.hiz
     sureHedef: S.hedef || 2.0,
     sureKat: 'eb',
@@ -161,7 +172,15 @@
     planTab: 'cizelge' // 'cizelge' veya 'projeksiyon'
   };
 
+  function planSenkron() {
+    if (!S.planlar || typeof S.planlar !== 'object') S.planlar = {};
+    if (S.planHafta && S.plan) {
+      S.planlar[S.planHafta] = S.plan;
+    }
+  }
+
   function kaydet() {
+    planSenkron();
     try { localStorage.setItem(STORE, JSON.stringify(S)); }
     catch (e) { toast('Kaydedilemedi: tarayıcı depolaması dolu ya da kapalı.'); }
   }
@@ -311,6 +330,18 @@
         if (t.tip === 'tekrar' && t.repeatKonuId === id && !t.done) {
           t.done = true;
           ui.geriAl.gorevler.push(t);
+        }
+      });
+    }
+    if (S.planlar) {
+      Object.keys(S.planlar).forEach(function (wk) {
+        if (wk === S.planHafta) return;
+        for (var pgi = 0; pgi < 7; pgi++) {
+          (S.planlar[wk][pgi] || []).forEach(function (t) {
+            if (t.tip === 'tekrar' && t.repeatKonuId === id && !t.done) {
+              t.done = true;
+            }
+          });
         }
       });
     }
@@ -970,6 +1001,48 @@
   }
   function hizYaz(h) { return String(h).replace('.', ',') + 'x'; }
 
+  function ayEkle(str, n) {
+    var p = str.split('-');
+    var d = new Date(+p[0], +p[1] - 1 + n, 1);
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1);
+  }
+
+  function gunGorevleri(tarihStr) {
+    var p = tarihStr.split('-');
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    var dayIdx = (d.getDay() + 6) % 7;
+    var hb = gunEkle(tarihStr, -dayIdx);
+    if (S.planlar && S.planlar[hb] && S.planlar[hb][dayIdx]) {
+      return S.planlar[hb][dayIdx];
+    }
+    if (hb === S.planHafta && S.plan && S.plan[dayIdx]) {
+      return S.plan[dayIdx];
+    }
+    return [];
+  }
+
+  function tumPlanlananHaftalar() {
+    var haftalarMap = {};
+    if (S.planlar && typeof S.planlar === 'object') {
+      Object.keys(S.planlar).forEach(function (wk) {
+        var hasTasks = false;
+        for (var i = 0; i < 7; i++) {
+          if (Array.isArray(S.planlar[wk][i]) && S.planlar[wk][i].length > 0) hasTasks = true;
+        }
+        if (hasTasks) haftalarMap[wk] = S.planlar[wk];
+      });
+    }
+    if (S.planHafta && S.plan && !haftalarMap[S.planHafta]) {
+      var hasTasksCur = false;
+      for (var j = 0; j < 7; j++) {
+        if (Array.isArray(S.plan[j]) && S.plan[j].length > 0) hasTasksCur = true;
+      }
+      if (hasTasksCur) haftalarMap[S.planHafta] = S.plan;
+    }
+    var keys = Object.keys(haftalarMap).sort();
+    return keys.map(function (k) { return { hafta: k, plan: haftalarMap[k] }; });
+  }
+
   // Eski/yarım kayıtları yeni yapıya uyarlar, hafta değiştiyse planı sıfırlar. Değişiklik olduysa true döner.
   function planNormalle() {
     var degisti = false, i, toplam = 0;
@@ -992,11 +1065,22 @@
     }
     var hb = haftaBasi();
     if (S.planHafta && S.planHafta < hb) {
-      for (i = 0; i < 7; i++) S.plan[i] = [];
-      S.planHafta = '';
-      degisti = true;
+      if (S.planlar && S.planlar[hb]) {
+        S.plan = S.planlar[hb];
+        S.planHafta = hb;
+        degisti = true;
+      } else {
+        for (i = 0; i < 7; i++) S.plan[i] = [];
+        S.planHafta = '';
+        degisti = true;
+      }
     } else if (!S.planHafta && toplam > 0) {
       S.planHafta = hb;
+      degisti = true;
+    }
+    if (!S.planlar || typeof S.planlar !== 'object') {
+      S.planlar = {};
+      if (S.planHafta && toplam > 0) S.planlar[S.planHafta] = S.plan;
       degisti = true;
     }
     if (!S.planAyarlar || typeof S.planAyarlar !== 'object') { S.planAyarlar = {}; degisti = true; }
@@ -1096,11 +1180,13 @@
     return x - y;
   }
 
-  // Planı bugünden itibaren yeniden dağıtır. Korunanlar: geçmiş günler, biten bloklar, elle eklenenler.
+  // Planı bugünden itibaren (veya belirtilen kapsamda) dağıtır.
+  // ayar = { dersler, sablon[7], aksam[7], hiz, duzen, maks, sureMod, kapsam }
   function planUret(ayar) {
     var buHafta = haftaBasi(), bi = bugunIdx(), simdi = simdiDk();
     var duzen = ayar.duzen || 'donusumlu', maks = ayar.maks || 0, sureMod = ayar.sureMod || 'gercek';
-    var yeniPlan = {}, korunan = {}, say = { konu: 0, tekrar: 0 };
+    var kapsam = ayar.kapsam || '1h'; // '1h' | '4h' | 'hepsi'
+    var korunan = {};
     var i;
 
     // Bu haftada bugünden itibaren yerleştirilecek gün kaldı mı? Kalmadıysa gelecek haftayı planla.
@@ -1112,11 +1198,10 @@
     else { hb = (S.planHafta && S.planHafta > buHafta) ? S.planHafta : gunEkle(buHafta, 7); basla = 0; bugunSira = -1; }
     var ayniHafta = (S.planHafta === hb);
 
+    var hafta0Plan = {};
     for (i = 0; i < 7; i++) {
-      // Geçmiş günlerde yalnızca yapılanlar ve elle eklenenler kalır; kaçırılan otomatik bloklar silinir,
-      // kaçırılan konular havuza döner ve bugünden itibaren yeniden yerleştirilir.
-      yeniPlan[i] = ayniHafta ? (S.plan[i] || []).filter(function (t) { return t.manual || gorevBitti(t); }) : [];
-      yeniPlan[i].forEach(function (t) {
+      hafta0Plan[i] = ayniHafta ? (S.plan[i] || []).filter(function (t) { return t.manual || gorevBitti(t); }) : [];
+      hafta0Plan[i].forEach(function (t) {
         if (t.konuId && (gorevBitti(t) || i >= bugunSira)) korunan[t.konuId] = true;
       });
     }
@@ -1124,90 +1209,138 @@
     var q = planHavuz(ayar.dersler, korunan, duzen, ayar.hiz, sureMod);
     var kuyruk = tekrarKuyrugu();
 
-    function gunUret(g) {
-      var kept = yeniPlan[g], yeni = [], dolu = {}, tkVar = false, akVar = false, gunKonu = 0;
-      kept.forEach(function (t) {
-        if (t.bas) dolu[t.bas] = true;
-        if (t.oturum === 'tk') tkVar = true;
-        if (t.tip === 'aksam') akVar = true;
-        if (t.tip === 'konu') gunKonu++;
-      });
-      var gtarih = gunEkle(hb, g), bugunmu = (g === bugunSira);
-      var sablon = SABLONLAR[ayar.sablon[g]] || SABLONLAR.yok;
+    var maxHafta = (kapsam === 'hepsi') ? 52 : (kapsam === '4h' ? 4 : 1);
+    var haftalar = [];
+    var toplamSay = { konu: 0, tekrar: 0 };
+    var sonKonuTarihi = hb;
 
-      function serbest(o, b, e, ad) {
-        return { t: ad, tip: 'serbest', oturum: o.id, bas: saatYaz(b), bit: saatYaz(e), done: false };
+    for (var hIdx = 0; hIdx < maxHafta; hIdx++) {
+      var curHb = (hIdx === 0) ? hb : gunEkle(hb, hIdx * 7);
+      var curBasla = (hIdx === 0) ? basla : 0;
+      var curBugunSira = (hIdx === 0) ? bugunSira : -1;
+      var curSimdi = (hIdx === 0) ? simdi : 0;
+      var haftaKept = (hIdx === 0) ? hafta0Plan : {};
+
+      if (hIdx > 0 && q.ags.length === 0 && q.oabt.length === 0) {
+        var weekEnd = gunEkle(curHb, 6);
+        var repeatVar = kuyruk.some(function (x) { return x.due <= weekEnd; });
+        if (!repeatVar) break;
       }
 
-      OTURUMLAR.forEach(function (o) {
-        if (sablon.oturum.indexOf(o.id) === -1) return;
-        var ob = dkOku(o.bas), oe = dkOku(o.bit);
-        if (o.grup === 'sabah' || o.grup === 'ogle') {
-          if (bugunmu && oe <= simdi) return;
-          var c = ob, yerlesen = 0, guard = 0;
-          if (bugunmu) c = Math.max(c, Math.floor(simdi / 5) * 5);
-          // Biten ve elle eklenen bloklar bu oturumda yer tutar
-          var tutulan = kept.filter(function (t) { return t.oturum === o.id && t.bas && t.bit; })
-            .map(function (t) { return { tb: dkOku(t.bas), te: dkOku(t.bit) }; })
-            .sort(function (a, b) { return a.tb - b.tb; });
-          while (guard++ < 40) {
-            tutulan.forEach(function (x) { if (c >= x.tb && c < x.te) c = x.te; });
-            var lim = oe;
-            tutulan.forEach(function (x) { if (x.tb >= c && x.tb < lim) lim = x.tb; });
-            if (lim - c < 10) { if (lim >= oe) break; c = lim; continue; }
-            var sinirDoldu = !!(maks && gunKonu >= maks);
-            var arr = sinirDoldu ? null : havuzDizi(q, o.grup);
-            if (!arr) {
-              if (lim - c >= 15) yeni.push(serbest(o, c, lim, sinirDoldu ? 'Soru çözümü & kısa tekrar' : 'Serbest çalışma & soru çözümü'));
-              if (lim >= oe) break;
-              c = lim; continue;
-            }
-            var it = arr[0], e = c + it.dk;
-            if (e > lim) {
-              if (yerlesen === 0 && (lim - c) >= it.dk * 0.75) { e = lim; }
-              else {
-                if (lim - c >= 15) yeni.push(serbest(o, c, lim, yerlesen ? 'Konu sonrası soru çözümü' : 'Soru çözümü & kısa tekrar'));
+      var weekPlan = {};
+      var weekSay = { konu: 0, tekrar: 0 };
+
+      for (var g = 0; g < 7; g++) {
+        var kept = haftaKept[g] || [];
+        if (g < curBasla) {
+          weekPlan[g] = kept;
+          continue;
+        }
+
+        var yeni = [], dolu = {}, tkVar = false, akVar = false, gunKonu = 0;
+        kept.forEach(function (t) {
+          if (t.bas) dolu[t.bas] = true;
+          if (t.oturum === 'tk') tkVar = true;
+          if (t.tip === 'aksam') akVar = true;
+          if (t.tip === 'konu') gunKonu++;
+        });
+
+        var gtarih = gunEkle(curHb, g), bugunmu = (g === curBugunSira);
+        var sablon = SABLONLAR[ayar.sablon[g]] || SABLONLAR.yok;
+
+        function serbest(o, b, e, ad) {
+          return { t: ad, tip: 'serbest', oturum: o.id, bas: saatYaz(b), bit: saatYaz(e), done: false };
+        }
+
+        OTURUMLAR.forEach(function (o) {
+          if (sablon.oturum.indexOf(o.id) === -1) return;
+          var ob = dkOku(o.bas), oe = dkOku(o.bit);
+          if (o.grup === 'sabah' || o.grup === 'ogle') {
+            if (bugunmu && oe <= curSimdi) return;
+            var c = ob, yerlesen = 0, guard = 0;
+            if (bugunmu) c = Math.max(c, Math.floor(curSimdi / 5) * 5);
+            var tutulan = kept.filter(function (t) { return t.oturum === o.id && t.bas && t.bit; })
+              .map(function (t) { return { tb: dkOku(t.bas), te: dkOku(t.bit) }; })
+              .sort(function (a, b) { return a.tb - b.tb; });
+            while (guard++ < 40) {
+              tutulan.forEach(function (x) { if (c >= x.tb && c < x.te) c = x.te; });
+              var lim = oe;
+              tutulan.forEach(function (x) { if (x.tb >= c && x.tb < lim) lim = x.tb; });
+              if (lim - c < 10) { if (lim >= oe) break; c = lim; continue; }
+              var sinirDoldu = !!(maks && gunKonu >= maks);
+              var arr = sinirDoldu ? null : havuzDizi(q, o.grup);
+              if (!arr) {
+                if (lim - c >= 15) yeni.push(serbest(o, c, lim, sinirDoldu ? 'Soru çözümü & kısa tekrar' : 'Serbest çalışma & soru çözümü'));
                 if (lim >= oe) break;
                 c = lim; continue;
               }
+              var it = arr[0], e = c + it.dk;
+              if (e > lim) {
+                if (yerlesen === 0 && (lim - c) >= it.dk * 0.75) { e = lim; }
+                else {
+                  if (lim - c >= 15) yeni.push(serbest(o, c, lim, yerlesen ? 'Konu sonrası soru çözümü' : 'Soru çözümü & kısa tekrar'));
+                  if (lim >= oe) break;
+                  c = lim; continue;
+                }
+              }
+              arr.shift();
+              yeni.push({ t: it.konuAd, ders: it.dersAd, tip: 'konu', konuId: it.id, oturum: o.id, bas: saatYaz(c), bit: saatYaz(e), done: false });
+              weekSay.konu++; toplamSay.konu++; gunKonu++; yerlesen++; c = e;
+              sonKonuTarihi = gtarih;
+              var repTarih = gunEkle(gtarih, 7);
+              kuyruk.push({ id: it.id, ad: it.konuAd, ders: it.dersAd, n: 0, due: repTarih });
+              kuyruk.sort(function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : 0; });
             }
-            arr.shift();
-            yeni.push({ t: it.konuAd, ders: it.dersAd, tip: 'konu', konuId: it.id, oturum: o.id, bas: saatYaz(c), bit: saatYaz(e), done: false });
-            say.konu++; gunKonu++; yerlesen++; c = e;
+          } else if (o.grup === 'tekrar') {
+            if (bugunmu && oe <= curSimdi) return;
+            var eklendi = 0, adetT = Math.floor((oe - ob) / TEKRAR_DK);
+            for (var r = 0; r < adetT; r++) {
+              var bt = ob + r * TEKRAR_DK;
+              if (bugunmu && bt + TEKRAR_DK <= curSimdi) continue;
+              if (dolu[saatYaz(bt)]) continue;
+              var bulunan = -1;
+              for (var x = 0; x < kuyruk.length; x++) { if (kuyruk[x].due <= gtarih) { bulunan = x; break; } }
+              if (bulunan < 0) break;
+              var rp = kuyruk.splice(bulunan, 1)[0];
+              yeni.push({ t: rp.ders + ' · ' + rp.ad, tip: 'tekrar', repeatKonuId: rp.id, n: rp.n, oturum: 'tk', bas: saatYaz(bt), bit: saatYaz(bt + TEKRAR_DK), done: false });
+              eklendi++; weekSay.tekrar++; toplamSay.tekrar++;
+              var repSonraki = gunEkle(gtarih, rp.n === 0 ? 14 : 30);
+              kuyruk.push({ id: rp.id, ad: rp.ad, ders: rp.ders, n: (rp.n || 0) + 1, due: repSonraki });
+              kuyruk.sort(function (a, b) { return a.due < b.due ? -1 : a.due > b.due ? 1 : 0; });
+            }
+            if (!eklendi && !tkVar) {
+              yeni.push({ t: 'Genel tekrar & soru çözümü', tip: 'serbest', oturum: 'tk', bas: o.bas, bit: o.bit, done: false });
+            }
           }
-        } else if (o.grup === 'tekrar') {
-          if (bugunmu && oe <= simdi) return;
-          var eklendi = 0, adetT = Math.floor((oe - ob) / TEKRAR_DK);
-          for (var r = 0; r < adetT; r++) {
-            var bt = ob + r * TEKRAR_DK;
-            if (bugunmu && bt + TEKRAR_DK <= simdi) continue;
-            if (dolu[saatYaz(bt)]) continue;
-            var bulunan = -1;
-            for (var x = 0; x < kuyruk.length; x++) { if (kuyruk[x].due <= gtarih) { bulunan = x; break; } }
-            if (bulunan < 0) break;
-            var rp = kuyruk.splice(bulunan, 1)[0];
-            yeni.push({ t: rp.ders + ' · ' + rp.ad, tip: 'tekrar', repeatKonuId: rp.id, n: rp.n, oturum: 'tk', bas: saatYaz(bt), bit: saatYaz(bt + TEKRAR_DK), done: false });
-            eklendi++; say.tekrar++;
-          }
-          if (!eklendi && !tkVar) {
-            yeni.push({ t: 'Genel tekrar & soru çözümü', tip: 'serbest', oturum: 'tk', bas: o.bas, bit: o.bit, done: false });
-          }
+        });
+
+        if (ayar.aksam[g] && !akVar && !(bugunmu && dkOku('22:30') <= curSimdi)) {
+          yeni.push({ t: 'Soru çözümü & deneme', tip: 'aksam', oturum: 'ak', bas: '21:00', bit: '22:30', done: false });
         }
+        weekPlan[g] = kept.concat(yeni).sort(zamanSirala);
+      }
+
+      haftalar.push({
+        hafta: curHb,
+        plan: weekPlan,
+        say: weekSay
       });
 
-      if (ayar.aksam[g] && !akVar && !(bugunmu && dkOku('22:30') <= simdi)) {
-        yeni.push({ t: 'Soru çözümü & deneme', tip: 'aksam', oturum: 'ak', bas: '21:00', bit: '22:30', done: false });
+      if (kapsam === 'hepsi' && q.ags.length === 0 && q.oabt.length === 0) {
+        break;
       }
-      yeniPlan[g] = kept.concat(yeni).sort(zamanSirala);
     }
 
-    for (i = basla; i < 7; i++) gunUret(i);
     var sonGun = gunEkle(hb, 6);
     return {
       hafta: hb,
-      plan: yeniPlan,
-      say: say,
-      kalanTekrar: kuyruk.filter(function (x) { return x.due <= sonGun; }).length
+      plan: haftalar[0].plan,
+      say: (kapsam === '1h' ? haftalar[0].say : toplamSay),
+      kalanTekrar: kuyruk.filter(function (x) { return x.due <= sonGun; }).length,
+      haftalar: haftalar,
+      toplamHafta: haftalar.length,
+      bitisTarih: sonKonuTarihi,
+      toplamSay: toplamSay
     };
   }
 
@@ -1228,12 +1361,13 @@
       hiz: HIZLAR.indexOf(pa.hiz) !== -1 ? pa.hiz : 1.5,
       duzen: DUZENLER.some(function (x) { return x.id === pa.duzen; }) ? pa.duzen : 'donusumlu',
       maks: MAKS_SECENEK.indexOf(pa.maks) !== -1 ? pa.maks : 0,
-      sure: pa.sureMod === 'sabit' ? 'sabit' : 'gercek'
+      sure: pa.sureMod === 'sabit' ? 'sabit' : 'gercek',
+      kapsam: pa.kapsam || '1h'
     };
   }
 
   function wzAyar(w) {
-    return { dersler: w.dersler, sablon: w.sablon, aksam: w.aksam, hiz: w.hiz, duzen: w.duzen, maks: w.maks, sureMod: w.sure };
+    return { dersler: w.dersler, sablon: w.sablon, aksam: w.aksam, hiz: w.hiz, duzen: w.duzen, maks: w.maks, sureMod: w.sure, kapsam: w.kapsam || '1h' };
   }
 
   function wzGecerli(w) {
@@ -1282,7 +1416,8 @@
       else metin = sinav.ad + ' sınavına ' + hk + ' hafta var. ' + TAMPON + ' haftalık tekrar payıyla yetişmek için haftada en az ' + Math.ceil(kalan / (hk - TAMPON)) + ' konu gerekir; bu planda ' + haftalik + '. Daha çok gün/oturum seç, hızı artır ya da günlük sınırı kaldır.';
       if (!(S.tarih && S.tarih.onayli)) metin += ' (Sınav tarihi henüz kesinleşmedi, Ayarlar’dan girebilirsin.)';
     }
-    return { kalan: kalan, haftalik: haftalik, hafta: hafta, metin: metin };
+    var bitisTarihi = (hafta > 0) ? gunEkle(haftaBasi(), (hafta - 1) * 7 + 6) : '';
+    return { kalan: kalan, haftalik: haftalik, hafta: hafta, metin: metin, bitisTarihi: bitisTarihi };
   }
 
   // Planı oluşturmadan önce ne olacağını gösterir (planUret saf fonksiyondur, durumu değiştirmez)
@@ -1294,7 +1429,13 @@
       gun.push(n);
       (S.plan[g] || []).forEach(function (t) { if (t.tip === 'konu' && !t.manual && !gorevBitti(t)) mevcut++; });
     }
-    return { r: r, gun: gun, mevcut: mevcut, gelecek: r.hafta !== haftaBasi() };
+    return {
+      r: r,
+      gun: gun,
+      mevcut: mevcut,
+      gelecek: r.hafta !== haftaBasi(),
+      cokHafta: !!(w.kapsam && w.kapsam !== '1h')
+    };
   }
 
   /* ---- Görünümler ---- */
@@ -1326,9 +1467,308 @@
     return h;
   }
 
+  /* ---- Aylık Görünüm ---- */
+  function viewPlanAy() {
+    var curAy = ui.seciliAy || (function () { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1); })();
+    var p = curAy.split('-');
+    var yil = +p[0], ayIdx = +p[1] - 1; // 0-based
+    var ayAdi = AY_ADLARI[ayIdx] + ' ' + yil;
+    var buAy = (function () { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1); })();
+
+    var ilkGunD = new Date(yil, ayIdx, 1);
+    var ilkGunHaftaGunu = (ilkGunD.getDay() + 6) % 7; // 0 = Pzt, ..., 6 = Paz
+    var aySonuD = new Date(yil, ayIdx + 1, 0);
+    var gunSayisi = aySonuD.getDate();
+
+    var oncekiAySonuD = new Date(yil, ayIdx, 0);
+    var oncekiAyGunSayisi = oncekiAySonuD.getDate();
+
+    var bugun = bugunStr();
+    var toplamKonu = 0, bitenKonu = 0, calismaGunu = 0;
+
+    var h = '<div class="pl-cal-wrap">';
+
+    // Navigation & header
+    h += '<div class="pl-cal-top">' +
+      '<div class="pl-cal-nav">' +
+        '<button class="pl-btn pl-btn-sm" data-a="play" data-d="-1" aria-label="Önceki ay">' + IC.cal + ' ‹ ' + AY_ADLARI[(ayIdx + 11) % 12] + '</button>' +
+        '<div class="pl-cal-title">' + ayAdi + (curAy === buAy ? ' <span class="pl-badge-cur">Bu Ay</span>' : '') + '</div>' +
+        '<button class="pl-btn pl-btn-sm" data-a="play" data-d="1" aria-label="Sonraki ay">' + AY_ADLARI[(ayIdx + 1) % 12] + ' › ' + IC.cal + '</button>' +
+      '</div>';
+    if (curAy !== buAy) {
+      h += '<button class="pl-btn pl-btn-sm" data-a="playbuay">Bu Aya Dön</button>';
+    }
+    h += '</div>';
+
+    // Day names header
+    h += '<div class="pl-cal-grid-head">';
+    for (var d = 0; d < 7; d++) {
+      h += '<div class="pl-cal-col-head">' + GUN_KISA[d] + '</div>';
+    }
+    h += '</div>';
+
+    // Calendar grid
+    h += '<div class="pl-cal-grid">';
+
+    // Leading days from previous month
+    for (var l = ilkGunHaftaGunu - 1; l >= 0; l--) {
+      var prevDayNum = oncekiAyGunSayisi - l;
+      var prevDateStr = gunEkle(curAy + '-01', -(l + 1));
+      var prevTasks = gunGorevleri(prevDateStr);
+      var prevKCount = 0;
+      prevTasks.forEach(function (t) { if (t.tip === 'konu') prevKCount++; });
+      h += '<div class="pl-cal-day other-month" data-a="plgunagit" data-tarih="' + prevDateStr + '">' +
+        '<div class="pl-cal-day-no">' + prevDayNum + '</div>' +
+        (prevKCount ? '<div class="pl-cal-dot-wrap"><span class="pl-cal-mini-badge">' + prevKCount + ' konu</span></div>' : '') +
+        '</div>';
+    }
+
+    // Days of current month
+    for (var day = 1; day <= gunSayisi; day++) {
+      var dateStr = yil + '-' + pad(ayIdx + 1) + '-' + pad(day);
+      var isToday = (dateStr === bugun);
+      var tasks = gunGorevleri(dateStr);
+      var kSay = 0, tkSay = 0, akVar = false, bittiSay = 0;
+      var dersSet = {};
+
+      tasks.forEach(function (t) {
+        if (t.tip === 'konu') {
+          kSay++;
+          if (t.ders) dersSet[t.ders] = true;
+          if (gorevBitti(t)) bittiSay++;
+        } else if (t.tip === 'tekrar') {
+          tkSay++;
+          if (gorevBitti(t)) bittiSay++;
+        } else if (t.tip === 'aksam') {
+          akVar = true;
+        }
+      });
+
+      if (kSay > 0 || tkSay > 0 || akVar) calismaGunu++;
+      toplamKonu += kSay;
+      bitenKonu += bittiSay;
+
+      var hepsiBitti = (tasks.length > 0 && bittiSay === (kSay + tkSay));
+
+      h += '<div class="pl-cal-day' + (isToday ? ' today' : '') + (hepsiBitti ? ' all-done' : '') + (tasks.length ? ' has-tasks' : ' empty-day') + '" data-a="plgunagit" data-tarih="' + dateStr + '" role="button" tabindex="0" title="' + dateStr + ' gününün haftalık planına git">' +
+        '<div class="pl-cal-day-top">' +
+          '<span class="pl-cal-day-no">' + day + '</span>' +
+          (isToday ? '<span class="pl-cal-today-tag">Bugün</span>' : '') +
+          (hepsiBitti ? '<span class="pl-cal-done-tag">' + IC.check + '</span>' : '') +
+        '</div>' +
+        '<div class="pl-cal-day-body">';
+
+      if (kSay > 0) {
+        var dersEtiketleri = Object.keys(dersSet).join(' · ');
+        h += '<div class="pl-cal-chip pl-chip-konu" title="' + esc(dersEtiketleri) + '"><b>' + kSay + ' konu</b>' + (dersEtiketleri ? ' · ' + esc(dersEtiketleri) : '') + '</div>';
+      }
+      if (tkSay > 0) {
+        h += '<div class="pl-cal-chip pl-chip-tk"><b>' + tkSay + ' tekrar</b></div>';
+      }
+      if (akVar) {
+        h += '<div class="pl-cal-chip pl-chip-ak"><b>Akşam etüdü</b></div>';
+      }
+      if (!tasks.length) {
+        var dayOfWeek = (new Date(yil, ayIdx, day).getDay() + 6) % 7;
+        if (dayOfWeek >= 5) {
+          h += '<div class="pl-cal-dinlenme">Dinlenme</div>';
+        }
+      }
+
+      h += '</div></div>';
+    }
+
+    // Trailing days to fill the last row of the grid
+    var sonGunHaftaGunu = (aySonuD.getDay() + 6) % 7;
+    if (sonGunHaftaGunu < 6) {
+      for (var f = 1; f <= 6 - sonGunHaftaGunu; f++) {
+        var nextDateStr = gunEkle(curAy + '-' + pad(gunSayisi), f);
+        var nextTasks = gunGorevleri(nextDateStr);
+        var nextKCount = 0;
+        nextTasks.forEach(function (t) { if (t.tip === 'konu') nextKCount++; });
+        h += '<div class="pl-cal-day other-month" data-a="plgunagit" data-tarih="' + nextDateStr + '">' +
+          '<div class="pl-cal-day-no">' + f + '</div>' +
+          (nextKCount ? '<div class="pl-cal-dot-wrap"><span class="pl-cal-mini-badge">' + nextKCount + ' konu</span></div>' : '') +
+          '</div>';
+      }
+    }
+
+    h += '</div>'; // pl-cal-grid
+
+    // Month summary bottom card
+    var ayYuzde = toplamKonu ? Math.round(bitenKonu / toplamKonu * 100) : 0;
+    h += '<div class="pl-cal-summary">' +
+      '<div class="pl-cal-stat"><b>' + calismaGunu + '</b><span>Çalışma Günü</span></div>' +
+      '<div class="pl-cal-stat"><b>' + toplamKonu + '</b><span>Planlanan Konu</span></div>' +
+      '<div class="pl-cal-stat"><b>' + bitenKonu + '</b><span>Tamamlanan</span></div>' +
+      '<div class="pl-cal-stat"><b>%' + ayYuzde + '</b><span>Ay Tamamlanma</span></div>' +
+    '</div>';
+
+    h += '<div class="pl-cal-foot-note">' +
+      '<p>💡 Bir güne dokunarak o günün detaylı saatlik ders akışına gidebilirsin.</p>' +
+    '</div>';
+
+    h += '</div>';
+    return h;
+  }
+
+  /* ---- Bitişe Kadar (Yol Haritası) Görünümü ---- */
+  function viewPlanBitis() {
+    var haftalar = tumPlanlananHaftalar();
+    var buHafta = haftaBasi();
+
+    var h = '<div class="pl-road-wrap">';
+
+    if (!haftalar.length) {
+      h += '<div class="pl-empty">' +
+        '<div class="pl-empty-ico">' + IC.plan + '</div>' +
+        '<h2>Henüz Plan Oluşturulmadı</h2>' +
+        '<p>Akıllı Planlayıcı ile tek dokunuşla tüm konuları sınava kadar haftalık olarak yerleştirebilirsin.</p>' +
+        '<button class="pl-btn pl-btn-primary pl-btn-lg" data-a="planac">Konular Bitene Kadar Planla</button>' +
+        '</div></div>';
+      return h;
+    }
+
+    // Toplam istatistikler
+    var toplamKonu = 0, bitenKonu = 0, toplamTekrar = 0;
+    var ilkHafta = haftalar[0].hafta;
+    var sonHafta = haftalar[haftalar.length - 1].hafta;
+    var sonTarih = gunEkle(sonHafta, 6);
+
+    haftalar.forEach(function (hf) {
+      for (var g = 0; g < 7; g++) {
+        (hf.plan[g] || []).forEach(function (t) {
+          if (t.tip === 'konu') {
+            toplamKonu++;
+            if (gorevBitti(t)) bitenKonu++;
+          } else if (t.tip === 'tekrar') {
+            toplamTekrar++;
+          }
+        });
+      }
+    });
+
+    var genelYuzde = toplamKonu ? Math.round(bitenKonu / toplamKonu * 100) : 0;
+
+    // Sınav güvenlik payı hesabı
+    var sinavNotu = '';
+    if (S.tarih && S.tarih.ags) {
+      var sonTarihD = new Date(sonTarih.split('-')[0], sonTarih.split('-')[1] - 1, sonTarih.split('-')[2]);
+      var agsD = new Date(S.tarih.ags.split('-')[0], S.tarih.ags.split('-')[1] - 1, S.tarih.ags.split('-')[2]);
+      var farkGun = Math.floor((agsD - sonTarihD) / (1000 * 60 * 60 * 24));
+      var farkHafta = Math.floor(farkGun / 7);
+      if (farkHafta > 0) {
+        sinavNotu = '🎉 Tüm konular AGS sınavına <b>' + farkHafta + ' hafta kala</b> (' + tarihEtiket(sonTarih) + ') bitiyor! Geriye kalan sürede genel denemeler ve pekiştirme için geniş bir tekrar payın var.';
+      } else if (farkHafta === 0) {
+        sinavNotu = '⚠️ Konular tam sınav haftasında bitiyor. Güvenlik payı bırakmak için günlük çalışma hızını artırabilirsin.';
+      } else {
+        sinavNotu = '⚠️ Mevcut tempoyla konular sınav tarihinden sonra bitiyor. Günde daha fazla konu veya oturum eklemen önerilir.';
+      }
+    }
+
+    // Hero Kartı
+    h += '<div class="pl-road-hero">' +
+      '<div class="pl-road-hero-main">' +
+        '<div class="pl-road-badge">🎯 Müfredat Yol Haritası</div>' +
+        '<h2 class="pl-road-title">Bitiş Hedefi: ' + tarihEtiket(sonTarih) + ' (' + haftalar.length + ' Hafta)</h2>' +
+        '<div class="pl-prog"><div class="pl-bar"><i style="width:' + genelYuzde + '%"></i></div><span>' + bitenKonu + ' / ' + toplamKonu + ' konu tamamlandı · %' + genelYuzde + '</span></div>' +
+        (sinavNotu ? '<div class="pl-road-sinav">' + sinavNotu + '</div>' : '') +
+      '</div>' +
+      '<div class="pl-road-hero-stats">' +
+        '<div class="pl-road-stat"><b>' + haftalar.length + '</b><span>Toplam Hafta</span></div>' +
+        '<div class="pl-road-stat"><b>' + toplamKonu + '</b><span>Toplam Konu</span></div>' +
+        '<div class="pl-road-stat"><b>' + toplamTekrar + '</b><span>Planlanan Tekrar</span></div>' +
+      '</div>' +
+    '</div>';
+
+    // Hafta kartları
+    h += '<div class="pl-road-weeks">';
+    haftalar.forEach(function (hf, hIdx) {
+      var hfHb = hf.hafta;
+      var hfSon = gunEkle(hfHb, 6);
+      var isBuHafta = (hfHb === buHafta);
+
+      var hfKonu = 0, hfBiten = 0, hfTekrar = 0;
+      var dersKonuMap = {};
+
+      for (var g = 0; g < 7; g++) {
+        (hf.plan[g] || []).forEach(function (t) {
+          if (t.tip === 'konu') {
+            hfKonu++;
+            if (gorevBitti(t)) hfBiten++;
+            var dAd = t.ders || 'Diğer';
+            if (!dersKonuMap[dAd]) dersKonuMap[dAd] = [];
+            dersKonuMap[dAd].push(t.t);
+          } else if (t.tip === 'tekrar') {
+            hfTekrar++;
+          }
+        });
+      }
+
+      var hfYuzde = hfKonu ? Math.round(hfBiten / hfKonu * 100) : 0;
+      var tamamiBitti = (hfKonu > 0 && hfBiten === hfKonu);
+
+      h += '<div class="pl-road-card' + (isBuHafta ? ' cur-week' : '') + (tamamiBitti ? ' done-week' : '') + '">' +
+        '<div class="pl-road-card-head">' +
+          '<div>' +
+            '<div class="pl-road-week-label">' + (hIdx + 1) + '. Hafta · ' + tarihEtiket(hfHb) + ' – ' + tarihEtiket(hfSon) +
+              (isBuHafta ? ' <span class="pl-badge-cur">Bu Hafta</span>' : '') +
+              (tamamiBitti ? ' <span class="pl-badge-done">✓ Tamamlandı</span>' : '') +
+            '</div>' +
+            '<div class="pl-road-week-meta">' + hfKonu + ' konu' + (hfTekrar ? ' · ' + hfTekrar + ' tekrar' : '') +
+              (hfKonu ? ' · ' + hfBiten + '/' + hfKonu + ' bitti (%' + hfYuzde + ')' : '') + '</div>' +
+          '</div>' +
+          '<button class="pl-btn pl-btn-sm" data-a="plhaftayagit" data-hafta="' + hfHb + '">Haftayı Aç ›</button>' +
+        '</div>';
+
+      // Konu listesi
+      var dersler = Object.keys(dersKonuMap);
+      if (dersler.length) {
+        h += '<div class="pl-road-dersler">';
+        dersler.forEach(function (dAd) {
+          var kns = dersKonuMap[dAd];
+          h += '<div class="pl-road-ders-row">' +
+            '<span class="pl-road-ders-tag">' + esc(dAd) + ' (' + kns.length + ')</span>' +
+            '<span class="pl-road-konu-list">' + kns.map(esc).join(' • ') + '</span>' +
+          '</div>';
+        });
+        h += '</div>';
+      }
+
+      h += '</div>';
+    });
+    h += '</div>';
+
+    // Bitiş Bayrağı
+    h += '<div class="pl-road-finish">' +
+      '<div class="pl-road-finish-ico">🏁</div>' +
+      '<div>' +
+        '<h3>Müfredat Tamamlama Hedefi: ' + tarihEtiket(sonTarih) + '</h3>' +
+        '<p>Seçilen derslerin tüm ilk tur çalışmaları bu tarihte tamamlanmış oluyor. Sonrasında sadece genel deneme ve hızlı aralıklı tekrarlar kalıyor.</p>' +
+      '</div>' +
+    '</div>';
+
+    // Alt eylemler
+    h += '<div class="pl-road-acts">' +
+      '<button class="pl-btn pl-btn-primary" data-a="planac">' + IC.plan + ' <span>Yeniden Planla / Güncelle</span></button>' +
+      '<button class="pl-btn" data-a="plantumtemizle">Tüm Planları Temizle</button>' +
+    '</div>';
+
+    h += '</div>';
+    return h;
+  }
+
   function viewPlan() {
     if (planNormalle()) kaydet();
     var buHafta = haftaBasi();
+    var curMod = ui.planMod || 'hafta';
+
+    // Hafta senkronizasyonu
+    var curHb = ui.seciliHafta || S.planHafta || buHafta;
+    if (S.planlar && S.planlar[curHb] && curHb !== S.planHafta) {
+      S.plan = S.planlar[curHb];
+      S.planHafta = curHb;
+    }
     var hb = S.planHafta || buHafta, i;
     var bi = (hb === buHafta) ? bugunIdx() : -1;
     if (typeof ui.planGun !== 'number' || ui.planGun < 0 || ui.planGun > 6) ui.planGun = Math.max(bi, 0);
@@ -1344,7 +1784,35 @@
 
     var h = head('Haftalık Plan') + '<div class="pl-wrap">';
 
-    h += '<div class="pl-top"><div class="pl-top-info"><div class="pl-range">' + tarihEtiket(hb) + ' – ' + tarihEtiket(gunEkle(hb, 6)) + '</div>' +
+    // 3'lü Görünüm Sekmesi (Haftalık / Aylık / Bitişe Kadar)
+    h += '<div class="pl-mod-bar" role="tablist">' +
+      '<button class="pl-mod-b' + (curMod === 'hafta' ? ' sel' : '') + '" data-a="plmod" data-m="hafta" role="tab" aria-selected="' + (curMod === 'hafta') + '">' + IC.cal + ' <span>Haftalık Plan</span></button>' +
+      '<button class="pl-mod-b' + (curMod === 'ay' ? ' sel' : '') + '" data-a="plmod" data-m="ay" role="tab" aria-selected="' + (curMod === 'ay') + '">' + IC.plan + ' <span>Aylık Görünüm</span></button>' +
+      '<button class="pl-mod-b' + (curMod === 'bitis' ? ' sel' : '') + '" data-a="plmod" data-m="bitis" role="tab" aria-selected="' + (curMod === 'bitis') + '">🎯 <span>Bitişe Kadar (Yol Haritası)</span></button>' +
+    '</div>';
+
+    if (curMod === 'ay') {
+      h += viewPlanAy();
+      h += '</div>';
+      return h;
+    }
+    if (curMod === 'bitis') {
+      h += viewPlanBitis();
+      h += '</div>';
+      return h;
+    }
+
+    // Hafta Gezinme Çubuğu
+    h += '<div class="pl-hafta-nav">' +
+      '<button class="pl-nav-btn" data-a="plhafta" data-d="-1" title="Önceki Hafta">‹ Önceki Hafta</button>' +
+      '<div class="pl-hafta-baslik">' +
+        '<span class="pl-range">' + tarihEtiket(hb) + ' – ' + tarihEtiket(gunEkle(hb, 6)) + '</span>' +
+        (hb === buHafta ? '<span class="pl-badge-cur">Bu Hafta</span>' : '<button class="pl-btn pl-btn-sm" data-a="plbuhafta">Bu Haftaya Dön</button>') +
+      '</div>' +
+      '<button class="pl-nav-btn" data-a="plhafta" data-d="1" title="Sonraki Hafta">Sonraki Hafta ›</button>' +
+    '</div>';
+
+    h += '<div class="pl-top"><div class="pl-top-info">' +
       (toplam
         ? '<div class="pl-prog"><div class="pl-bar"><i style="width:' + yuzde + '%"></i></div><span>' + biten + ' / ' + toplam + ' tamamlandı · %' + yuzde + '</span></div>'
         : '<div class="pl-sub">Bu hafta için henüz plan yok</div>') +
@@ -1477,6 +1945,19 @@
       wzSeg('wzmaks', MAKS_SECENEK.map(function (x) { return { v: x, ad: x ? String(x) : 'Sınırsız' }; }), w.maks) +
       '<p class="sh-hint">Sınıra ulaşılınca kalan oturumlar soru çözümüne ayrılır.</p></section>';
 
+    // 6 · Planlama süresi / kapsamı
+    h += '<section class="sh-sec"><h3>6 · Ne kadar süre planlansın?</h3><div class="sh-chips">';
+    var kapsams = [
+      { id: '1h', ad: '1 Hafta', not: 'Sadece önümüzdeki haftayı planla' },
+      { id: '4h', ad: '1 Ay (4 Hafta)', not: 'Önümüzdeki 4 haftayı programla' },
+      { id: 'hepsi', ad: 'Konular Bitene Kadar', not: 'Tüm müfredatı bitiş tarihine kadar tek seferde planla' }
+    ];
+    kapsams.forEach(function (x) {
+      var on = (w.kapsam === x.id) || (!w.kapsam && x.id === '1h');
+      h += '<button class="sh-chip' + (on ? ' on' : '') + '" data-a="wzkapsam" data-val="' + x.id + '" aria-pressed="' + on + '"><span>' + x.ad + '</span><small>' + x.not + '</small></button>';
+    });
+    h += '</div><p class="sh-hint">“Konular Bitene Kadar” seçildiğinde tüm müfredat ders sıranıza ve günlük çalışma temponuza göre bitiş haftasına kadar otomatik dağıtılır.</p></section>';
+
     // Özet + önizleme
     var og = wzOngoru(w), hata = wzGecerli(w);
     h += '<div class="sh-ozet"><b>Haftada yaklaşık ' + og.haftalik + ' konu · ' + og.kalan + ' konu kaldı' + (og.hafta ? ' · yaklaşık ' + og.hafta + ' hafta' : '') + '.</b>' +
@@ -1484,13 +1965,22 @@
 
     if (!hata) {
       var on = wzOnizle(w), r = on.r, hb = r.hafta;
-      h += '<div class="sh-ozet sh-onizle"><b>Önizleme</b><br>' +
-        (on.gelecek ? 'Bu hafta için çalışma günü kalmadığından plan <b>gelecek haftaya</b> (' : 'Bu haftanın kalan günleri planlanır (') +
-        tarihEtiket(hb) + ' – ' + tarihEtiket(gunEkle(hb, 6)) + (on.gelecek ? ') yazılır.' : ').') +
-        '<div class="sh-onizle-gun">' + GUN_KISA.map(function (g, ix) { return '<span class="' + (on.gun[ix] ? 'var' : '') + '"><i>' + g + '</i>' + (on.gun[ix] || '—') + '</span>'; }).join('') + '</div>' +
-        r.say.konu + ' yeni konu ve ' + r.say.tekrar + ' tekrar yerleşir' + (r.kalanTekrar ? '; ' + r.kalanTekrar + ' tekrar bu haftaya sığmaz (Panel’de görünür)' : '') + '.' +
-        (on.gelecek && planToplam() > 0 && S.planHafta !== hb ? '<br>Şu anki haftanın planı bununla değişir; yaptıkların Tamamlananlar’da kalır.' : '') +
-        (!on.gelecek && on.mevcut ? '<br>Şu an planda bekleyen ' + on.mevcut + ' konu bloğu yeniden dağıtılır; biten ve elle eklediklerin korunur.' : '') + '</div>';
+      h += '<div class="sh-ozet sh-onizle"><b>Önizleme</b><br>';
+      if (on.cokHafta) {
+        h += (w.kapsam === 'hepsi' ? 'Tüm müfredat tek seferde bitene kadar planlanır: ' : 'Önümüzdeki 4 hafta planlanır: ') +
+          '<b>' + r.toplamHafta + ' hafta</b> boyunca (' + tarihEtiket(hb) + ' – ' + tarihEtiket(r.bitisTarih) + ') toplam <b>' + r.say.konu + ' konu</b> ve <b>' + r.say.tekrar + ' tekrar</b> dağıtılır.<br>' +
+          '🎯 Tahmini bitiş: <b>' + tarihEtiket(r.bitisTarih) + '</b>.' +
+          '<div class="sh-onizle-gun" style="margin-top:8px;">' + GUN_KISA.map(function (g, ix) { return '<span class="' + (on.gun[ix] ? 'var' : '') + '"><i>' + g + '</i>' + (on.gun[ix] || '—') + '</span>'; }).join('') + '</div>' +
+          '<small class="sh-hint">İlk haftanın günlük konu dağılımı yukarıdaki gibidir. Sonraki haftalar bu tempoda devam eder.</small>';
+      } else {
+        h += (on.gelecek ? 'Bu hafta için çalışma günü kalmadığından plan <b>gelecek haftaya</b> (' : 'Bu haftanın kalan günleri planlanır (') +
+          tarihEtiket(hb) + ' – ' + tarihEtiket(gunEkle(hb, 6)) + (on.gelecek ? ') yazılır.' : ').') +
+          '<div class="sh-onizle-gun">' + GUN_KISA.map(function (g, ix) { return '<span class="' + (on.gun[ix] ? 'var' : '') + '"><i>' + g + '</i>' + (on.gun[ix] || '—') + '</span>'; }).join('') + '</div>' +
+          r.say.konu + ' yeni konu ve ' + r.say.tekrar + ' tekrar yerleşir' + (r.kalanTekrar ? '; ' + r.kalanTekrar + ' tekrar bu haftaya sığmaz (Panel’de görünür)' : '') + '.' +
+          (on.gelecek && planToplam() > 0 && S.planHafta !== hb ? '<br>Şu anki haftanın planı bununla değişir; yaptıkların Tamamlananlar’da kalır.' : '') +
+          (!on.gelecek && on.mevcut ? '<br>Şu an planda bekleyen ' + on.mevcut + ' konu bloğu yeniden dağıtılır; biten ve elle eklediklerin korunur.' : '');
+      }
+      h += '</div>';
     }
     h += '<p class="sh-hint">Tekrarlar (1. hafta → 3. hafta → aylık) 10 dakikalık bloklar halinde 16:30–17:00 arasına yerleşir.</p>';
     if (hata) h += '<p class="sh-uyari" role="alert">' + hata + '</p>';
@@ -2356,9 +2846,105 @@
       window.scrollTo(0, 0); render();
       ACTIONS.planac();
     },
+    plmod: function (el) {
+      ui.planMod = el.dataset.m || 'hafta';
+      render();
+    },
+    plhafta: function (el) {
+      var dir = +el.dataset.d;
+      var curHb = ui.seciliHafta || S.planHafta || haftaBasi();
+      var yeniHb = gunEkle(curHb, dir * 7);
+      if (!S.planlar) S.planlar = {};
+      if (S.planHafta && S.plan) S.planlar[S.planHafta] = S.plan;
+      ui.seciliHafta = yeniHb;
+      if (S.planlar[yeniHb]) {
+        S.plan = S.planlar[yeniHb];
+        S.planHafta = yeniHb;
+      } else {
+        S.plan = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[] };
+        S.planHafta = yeniHb;
+        S.planlar[yeniHb] = S.plan;
+      }
+      ui.planGun = (yeniHb === haftaBasi()) ? bugunIdx() : 0;
+      kaydet(); render();
+    },
+    plbuhafta: function () {
+      var bh = haftaBasi();
+      if (!S.planlar) S.planlar = {};
+      if (S.planHafta && S.plan) S.planlar[S.planHafta] = S.plan;
+      ui.seciliHafta = bh;
+      if (S.planlar[bh]) {
+        S.plan = S.planlar[bh];
+        S.planHafta = bh;
+      }
+      ui.planGun = bugunIdx();
+      kaydet(); render();
+    },
+    plhaftayagit: function (el) {
+      var hf = el.dataset.hafta;
+      if (!hf) return;
+      if (!S.planlar) S.planlar = {};
+      if (S.planHafta && S.plan) S.planlar[S.planHafta] = S.plan;
+      ui.seciliHafta = hf;
+      if (S.planlar[hf]) {
+        S.plan = S.planlar[hf];
+        S.planHafta = hf;
+      }
+      ui.planMod = 'hafta';
+      ui.planGun = (hf === haftaBasi()) ? bugunIdx() : 0;
+      kaydet(); render();
+    },
+    plgunagit: function (el) {
+      var tStr = el.dataset.tarih;
+      if (!tStr) return;
+      var p = tStr.split('-');
+      var d = new Date(+p[0], +p[1] - 1, +p[2]);
+      var dayIdx = (d.getDay() + 6) % 7;
+      var hb = gunEkle(tStr, -dayIdx);
+      if (!S.planlar) S.planlar = {};
+      if (S.planHafta && S.plan) S.planlar[S.planHafta] = S.plan;
+      ui.seciliHafta = hb;
+      if (S.planlar[hb]) {
+        S.plan = S.planlar[hb];
+        S.planHafta = hb;
+      } else {
+        S.plan = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[] };
+        S.planHafta = hb;
+        S.planlar[hb] = S.plan;
+      }
+      ui.planMod = 'hafta';
+      ui.planGun = dayIdx;
+      kaydet(); render();
+    },
+    play: function (el) {
+      var dir = +el.dataset.d;
+      var curAy = ui.seciliAy || (function () { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1); })();
+      ui.seciliAy = ayEkle(curAy, dir);
+      render();
+    },
+    playbuay: function () {
+      var d = new Date();
+      ui.seciliAy = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+      render();
+    },
+    plantumtemizle: function () {
+      if (!confirm('Tüm haftalara ait tüm çalışma planları silinecek. Konuların durumu ve tekrar kayıtların değişmez. Emin misiniz?')) return;
+      S.planlar = {};
+      for (var i = 0; i < 7; i++) S.plan[i] = [];
+      S.planHafta = '';
+      ui.seciliHafta = '';
+      kaydet(); render(); toast('Tüm planlar temizlendi.');
+    },
+    wzkapsam: function (el) {
+      if (ui.wz) {
+        ui.wz.kapsam = el.dataset.val;
+        sheetCiz();
+      }
+    },
     planbosalt: function () {
       if (!confirm('Bu haftanın tüm planı boşaltılsın mı? Konuların durumu ve tekrar kayıtların değişmez.')) return;
       for (var i = 0; i < 7; i++) S.plan[i] = [];
+      if (S.planlar && S.planHafta) delete S.planlar[S.planHafta];
       S.planHafta = '';
       kaydet(); render(); toast('Haftalık plan boşaltıldı.');
     },
@@ -2416,6 +3002,14 @@
       var r = planUret(wzAyar(w));
       S.plan = r.plan;
       S.planHafta = r.hafta;
+      if (!S.planlar) S.planlar = {};
+      if (r.haftalar && r.haftalar.length > 0) {
+        r.haftalar.forEach(function (hf) {
+          S.planlar[hf.hafta] = hf.plan;
+        });
+      } else {
+        S.planlar[r.hafta] = r.plan;
+      }
       var pa = {};
       Object.keys(S.planAyarlar || {}).forEach(function (k) { pa[k] = S.planAyarlar[k]; });
       pa.v2 = true; pa.hiz = w.hiz; pa.seciliDersler = w.dersler.slice();
@@ -2423,12 +3017,20 @@
       pa.aktifGunler = w.sablon.map(function (x) { return x !== 'yok'; });
       pa.aksamGunler = w.aksam.slice();
       pa.duzen = w.duzen; pa.maks = w.maks; pa.sureMod = w.sure;
+      pa.kapsam = w.kapsam;
       S.planAyarlar = pa;
       S.hiz = w.hiz; ui.sureHiz = w.hiz;
+      ui.seciliHafta = r.hafta;
       ui.planGun = (r.hafta === haftaBasi()) ? bugunIdx() : 0;
       kaydet(); sheetKapat(); render();
-      toast((r.hafta > haftaBasi() ? 'Bu haftada kalan gün olmadığı için gelecek haftanın planı hazırlandı. ' : '') + r.say.konu + ' konu ve ' + r.say.tekrar + ' tekrar yerleştirildi.' +
-        (r.kalanTekrar ? ' ' + r.kalanTekrar + ' tekrar bu haftaya sığmadı; Panel’de görünür.' : ''));
+      if (w.kapsam === 'hepsi') {
+        toast('Tüm sistem programlandı! ' + r.toplamHafta + ' hafta boyunca ' + r.say.konu + ' konu ' + tarihEtiket(r.bitisTarih) + ' tarihine kadar planlandı.');
+      } else if (w.kapsam === '4h') {
+        toast('4 haftalık plan hazırlandı! ' + r.say.konu + ' konu ve ' + r.say.tekrar + ' tekrar yerleştirildi.');
+      } else {
+        toast((r.hafta > haftaBasi() ? 'Bu haftada kalan gün olmadığı için gelecek haftanın planı hazırlandı. ' : '') + r.say.konu + ' konu ve ' + r.say.tekrar + ' tekrar yerleştirildi.' +
+          (r.kalanTekrar ? ' ' + r.kalanTekrar + ' tekrar bu haftaya sığmadı; Panel’de görünür.' : ''));
+      }
     },
     sheetkapat: function () { sheetKapat(); },
     sheetders: function (el) { if (ui.sheet) { ui.sheet.ders = el.dataset.id; sheetCiz(true); } },

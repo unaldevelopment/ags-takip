@@ -29,6 +29,7 @@ function planla(secenek) {
   if (o.sure) click('wzsure', { val: o.sure });
   if (o.maks !== undefined) click('wzmaks', { val: String(o.maks) });
   if (o.hiz) click('wzhiz', { val: String(o.hiz) });
+  if (o.kapsam) click('wzkapsam', { val: o.kapsam });
   (o.sablon || []).forEach((v, g) => click('wzsablon', { g: String(g), val: v }));
   click('wzolustur');
   return S();
@@ -226,6 +227,50 @@ boot(null);
 click('toggle', { id: 'eb:egitimin-temel-kavramlari-ve-islevleri' });
 click('nav', { id: 'gecmis' });
 ok(/gc-row/.test(main()) && /1 sa 5 dk/.test(text(main())), 'Biten konu ve süresi listelenir (65 dk = 1 sa 5 dk)', text(main()).slice(0, 200));
+
+/* ------------------------------------------------------------------ */
+bolum('L · Çok haftalık ve bitene kadar planlama');
+setNow('2026-10-12T08:00:00'); boot(null);
+s = planla({ dersler: ['eb', 'ok'], kapsam: 'hepsi', duzen: 'sirali', sure: 'sabit' });
+ok(s.planlar && typeof s.planlar === 'object', 'Planlar nesnesi oluşur');
+const haftalar = Object.keys(s.planlar);
+ok(haftalar.length > 1, 'Konular bitene kadar seçilince birden fazla hafta üretilir (' + haftalar.length + ' hafta)', haftalar.length);
+ok(haftalar[0] === '2026-10-12', 'İlk hafta bu haftadır', haftalar[0]);
+let toplamK = 0;
+haftalar.forEach(wk => {
+  for (let g = 0; g < 7; g++) (s.planlar[wk][g] || []).forEach(t => { if (t.tip === 'konu') toplamK++; });
+});
+ok(toplamK >= 50, 'Tüm müfredattaki konular haftalara dağıtıldı (' + toplamK + ' konu)', toplamK);
+
+// 4 haftalık plan testi
+boot(null);
+s = planla({ dersler: ['eb', 'ok'], kapsam: '4h', duzen: 'sirali', sure: 'sabit' });
+const hf4 = Object.keys(s.planlar);
+ok(hf4.length === 4, '4 haftalık plan seçilince tam 4 hafta üretilir', hf4.length);
+
+/* ------------------------------------------------------------------ */
+bolum('M · Aylık ve Yol Haritası (Bitişe Kadar) görünümleri');
+click('nav', { id: 'plan' });
+ok(/pl-mod-bar/.test(main()), 'Görünüm modu sekmesi görüntülenir');
+click('plmod', { m: 'ay' });
+ok(/pl-cal-wrap/.test(main()), 'Aylık takvim görünümüne geçilir');
+ok(/pl-cal-day/.test(main()), 'Aylık takvimde gün hücreleri vardır');
+ok(/pl-cal-summary/.test(main()), 'Ay özeti istatistikleri görüntülenir');
+click('plmod', { m: 'bitis' });
+ok(/pl-road-wrap/.test(main()), 'Yol haritası (Bitişe Kadar) görünümüne geçilir');
+ok(/Bitiş Hedefi/.test(main()) && /pl-road-card/.test(main()), 'Bitiş hedefi ve hafta kartları görüntülenir');
+
+/* ------------------------------------------------------------------ */
+bolum('N · Hafta ve Gün gezinmeleri');
+click('plmod', { m: 'hafta' });
+const ilkHb = S().planHafta;
+click('plhafta', { d: '1' });
+ok(S().planHafta > ilkHb, 'Sonraki haftaya geçildi', S().planHafta);
+click('plbuhafta');
+ok(S().planHafta === '2026-10-12', 'Bu haftaya dönüldü', S().planHafta);
+click('plmod', { m: 'ay' });
+click('plgunagit', { tarih: '2026-10-15' });
+ok(S().planHafta === '2026-10-12', 'Güne tıklayınca o haftaya ve haftalık görünüme dönülür');
 
 console.log('\n' + gecen + ' geçti, ' + kalan + ' kaldı');
 process.exit(kalan ? 1 : 0);

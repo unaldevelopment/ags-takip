@@ -126,6 +126,7 @@ node test/senaryolar.js
 - **v2 – Plan düzeltmesi.** Geçmiş günlerde kaçırılan konular havuza döner.
 - **v3 – Tamamlananlar sekmesi + sade tema.** `S.bitis` eklendi; yeni sekme; koyu sade tema katmanı.
 - **v4 – Plan seçenekleri.** Çalışma düzeni (sırayla/dönüşümlü/ağırlıklı), gün şablonları, günlük konu sınırı, konu kapsamı (`atla`, "buradan başla"), gerçek video süresi, sınav hedefi tahmini, önizleme, hız ayarı tekleştirme; imleç tabanlı oturum doldurma; test paketi; `derle.js`; bu belge.
+- **v5 – Aylık Görünüm & Bitişe Kadar Tüm Sistem Planlama.** Plan ekranında 3 mod (Haftalık, Aylık, Bitişe Kadar Yol Haritası); haftalar arası gezinme (`◀ Önceki Hafta / Sonraki Hafta ▶`); aylık takvim matrisi ve gün detayına tek dokunuşla gitme; sihirbazda 1 Hafta / 4 Hafta / "Konular Bitene Kadar" kapsam seçeneği; tüm müfredatı tek seferde bitiş tarihine kadar haftalara dağıtma ve aralıklı tekrarları otomatik ilerletme; çok haftalık veri modeli (`S.planlar`).
 
 ## 12. Bilinen eksikler / sıradaki iş fikirleri
 
@@ -136,4 +137,3 @@ node test/senaryolar.js
 - Kullanıcının "Konu başına süre" tahmini video süresidir; soru çözümü/not süresi dahil değil.
 - Otomatik yedek hatırlatması yok (veri yalnızca tarayıcıda; asıl risk veri kaybı). Düzenli "Yedeği indir" hatırlatması önerilir.
 - Ölü kod (7. bölüm) temizlenebilir.
-- Aylık yol haritası / çok haftalık plan görünümü yok; sihirbaz yalnızca bir haftayı üretir.

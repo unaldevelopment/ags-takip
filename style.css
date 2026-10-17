@@ -3555,3 +3555,460 @@ dialog.sheet::backdrop { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4
   .sh-gunrow .sh-gunad { grid-column: 1 / -1; }
   .sh-seg.c6 { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- 3'lü Görünüm Sekmesi (Haftalık / Aylık / Bitişe Kadar) ---------- */
+.pl-mod-bar {
+  display: flex;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 6px;
+  border-radius: var(--radius-card);
+  flex-wrap: wrap;
+}
+.pl-mod-b {
+  flex: 1;
+  min-width: 140px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--ink-sec);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+.pl-mod-b svg { width: 18px; height: 18px; }
+.pl-mod-b:hover { color: var(--ink); background: rgba(255, 255, 255, 0.04); }
+.pl-mod-b.sel {
+  background: var(--blue);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---------- Hafta Gezinme Çubuğu ---------- */
+.pl-hafta-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 10px 16px;
+  flex-wrap: wrap;
+}
+.pl-hafta-baslik {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pl-nav-btn {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-btn);
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.pl-nav-btn:hover { border-color: var(--blue-light); color: var(--blue-light); }
+.pl-badge-cur {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(74, 119, 207, 0.2);
+  color: var(--blue-light);
+  border: 1px solid var(--blue);
+  font-size: 12px;
+  font-weight: 600;
+}
+.pl-badge-done {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(127, 181, 155, 0.2);
+  color: var(--green);
+  border: 1px solid var(--green);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ---------- Aylık Takvim Görünümü ---------- */
+.pl-cal-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pl-cal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 12px 18px;
+  flex-wrap: wrap;
+}
+.pl-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pl-cal-title {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pl-btn-sm {
+  height: 38px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+.pl-cal-grid-head {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.pl-cal-col-head {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-sec);
+  padding: 6px 0;
+}
+.pl-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.pl-cal-day {
+  min-height: 90px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.pl-cal-day:hover {
+  border-color: var(--blue-light);
+  transform: translateY(-1px);
+}
+.pl-cal-day.today {
+  border-color: var(--blue);
+  background: var(--today-bg);
+  box-shadow: 0 0 0 1px var(--blue);
+}
+.pl-cal-day.other-month {
+  opacity: 0.35;
+  background: transparent;
+}
+.pl-cal-day.all-done {
+  border-color: rgba(127, 181, 155, 0.4);
+}
+.pl-cal-day-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pl-cal-day-no {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.pl-cal-today-tag {
+  font-size: 11px;
+  color: var(--blue-light);
+  font-weight: 600;
+}
+.pl-cal-done-tag {
+  color: var(--green);
+  display: flex;
+  align-items: center;
+}
+.pl-cal-done-tag svg { width: 14px; height: 14px; }
+.pl-cal-day-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.pl-cal-chip {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pl-chip-konu {
+  background: rgba(74, 119, 207, 0.15);
+  color: var(--blue-light);
+  border: 1px solid rgba(74, 119, 207, 0.3);
+}
+.pl-chip-tk {
+  background: rgba(200, 166, 105, 0.15);
+  color: var(--amber);
+  border: 1px solid rgba(200, 166, 105, 0.3);
+}
+.pl-chip-ak {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--helper);
+  border: 1px solid var(--line);
+}
+.pl-cal-dinlenme {
+  font-size: 11px;
+  color: var(--ink-sec);
+  font-style: italic;
+  padding: 2px 4px;
+}
+.pl-cal-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 16px 20px;
+}
+.pl-cal-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.pl-cal-stat b {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 22px;
+  color: var(--ink);
+}
+.pl-cal-stat span {
+  font-size: 12px;
+  color: var(--ink-sec);
+}
+.pl-cal-foot-note {
+  text-align: center;
+  color: var(--ink-sec);
+  font-size: 13px;
+  margin-top: 4px;
+}
+.pl-cal-dot-wrap {
+  margin-top: 4px;
+}
+.pl-cal-mini-badge {
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--ink-sec);
+}
+
+/* ---------- Bitişe Kadar (Yol Haritası) Görünümü ---------- */
+.pl-road-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.pl-road-hero {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.pl-road-hero-main {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pl-road-badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pl-road-title {
+  margin: 0;
+  font-size: 24px;
+  color: var(--ink);
+}
+.pl-road-sinav {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--helper);
+  line-height: 1.5;
+}
+.pl-road-sinav b { color: var(--ink); }
+.pl-road-hero-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.pl-road-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--card-dark);
+  border: 1px solid var(--line);
+  min-width: 90px;
+}
+.pl-road-stat b {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 24px;
+  color: var(--ink);
+}
+.pl-road-stat span {
+  font-size: 12px;
+  color: var(--ink-sec);
+}
+.pl-road-weeks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pl-road-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s ease;
+}
+.pl-road-card:hover {
+  border-color: var(--blue-light);
+}
+.pl-road-card.cur-week {
+  border-color: var(--blue);
+  background: var(--today-bg);
+}
+.pl-road-card.done-week {
+  border-color: rgba(127, 181, 155, 0.4);
+}
+.pl-road-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.pl-road-week-label {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pl-road-week-meta {
+  font-size: 13px;
+  color: var(--ink-sec);
+  margin-top: 2px;
+}
+.pl-road-dersler {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.pl-road-ders-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.pl-road-ders-tag {
+  font-weight: 600;
+  color: var(--blue-light);
+  min-width: 130px;
+}
+.pl-road-konu-list {
+  color: var(--helper);
+  flex: 1;
+}
+.pl-road-finish {
+  background: linear-gradient(135deg, rgba(74, 119, 207, 0.12), rgba(127, 181, 155, 0.12));
+  border: 1px dashed var(--blue);
+  border-radius: var(--radius-card);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pl-road-finish-ico {
+  font-size: 32px;
+}
+.pl-road-finish h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  color: var(--ink);
+}
+.pl-road-finish p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--helper);
+  line-height: 1.4;
+}
+.pl-road-acts {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+@media (max-width: 700px) {
+  .pl-cal-grid-head, .pl-cal-grid { gap: 4px; }
+  .pl-cal-day { min-height: 68px; padding: 4px; }
+  .pl-cal-day-no { font-size: 14px; }
+  .pl-cal-chip { font-size: 10px; padding: 1px 4px; }
+  .pl-cal-summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .pl-road-hero { padding: 18px 16px; }
+  .pl-road-card { padding: 14px 16px; }
+  .pl-road-ders-tag { min-width: 100%; }
+}
